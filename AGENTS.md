@@ -66,3 +66,28 @@ This project adopts `agent_project_standard` in `tool_pinned` mode (v3.1.3):
 - Structure validation: `python docs/dev/standard/tools/validate_structure.py --root . --profile target-project --language-profile mixed --schemas-root docs/dev/standard/schemas --check-paths --check-registry --check-schemas --check-project-snapshot`
 - Project snapshot: `docs/PROJECT_SNAPSHOT.md` and `docs/registry/project_snapshot.json`
 - CI: `.github/workflows/validate-standard.yml`
+
+## Переиспользование кода между репозиториями (ADR-021 / ADR-022)
+
+Реестр канонов — `${PROJECTS_ROOT}/IskInoSfera/docs/architecture/shared_modules.yaml`.
+**Смотри в него до того, как писать код**, а не на ревью. Определи класс
+возможности:
+
+- **действие** — есть побочный эффект во внешнем мире или привязка к
+  конкретной машине → Automation Server;
+- **чистая функция** — преобразование данных без побочных эффектов
+  (байты → структура, строка → нормализованная форма) → библиотека. Свою
+  писать можно, пока у возможности нет второго реального потребителя;
+  если канон есть в реестре — **переиспользовать обязательно, копия
+  запрещена**;
+- **домен продукта** — знание предметной области → остаётся здесь,
+  не обобщается;
+- **схема обмена с другим продуктом** → версионированный артефакт;
+  рукописная копия схемы на каждой стороне запрещена, расхождение
+  обязано ломать сборку, а не проявляться в проде.
+
+Два правила, которые чаще всего нарушают:
+
+1. **Чистую функцию не подменять сетевым навыком Automation Server** —
+   это добавляет зависимость от чужого хоста туда, где её не было.
+2. **Подключил канон — добавь себя в `consumers` реестра тем же PR.**
