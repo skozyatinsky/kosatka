@@ -127,7 +127,10 @@
       "type": "boolean"
     },
     "readiness_status": {
-      "enum": ["READY_TO_MERGE", "REJECTED"]
+      "enum": [
+        "READY_TO_MERGE",
+        "REJECTED"
+      ]
     },
     "request_id": {
       "minLength": 1,
@@ -177,7 +180,11 @@
           "type": "string"
         }
       },
-      "required": ["targeted_tests", "affected_tests", "full_regression"],
+      "required": [
+        "targeted_tests",
+        "affected_tests",
+        "full_regression"
+      ],
       "type": "object"
     }
   },

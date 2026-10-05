@@ -188,7 +188,9 @@
       "type": "string"
     },
     "on_ambiguity": {
-      "enum": ["BLOCKED"],
+      "enum": [
+        "BLOCKED"
+      ],
       "type": "string"
     },
     "policy_refs": {
@@ -262,7 +264,9 @@
             "type": "number"
           }
         },
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "minItems": 1,

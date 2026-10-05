@@ -14,7 +14,9 @@
         },
         "delete_unmerged_branch": {
           "description": "жёстко forbidden — unmerged ветка не удаляется автоматически",
-          "enum": ["forbidden"],
+          "enum": [
+            "forbidden"
+          ],
           "type": "string"
         },
         "feature_branch_patterns": {
@@ -87,7 +89,10 @@
           "type": "string"
         }
       },
-      "required": ["required", "remote_prune_requires_dry_run_first"],
+      "required": [
+        "required",
+        "remote_prune_requires_dry_run_first"
+      ],
       "type": "object"
     },
     "primary_workspace": {
@@ -223,7 +228,9 @@
         },
         "remove_dirty_worktree": {
           "description": "жёстко forbidden — dirty worktree не удаляется автоматически",
-          "enum": ["forbidden"],
+          "enum": [
+            "forbidden"
+          ],
           "type": "string"
         },
         "worktree_roots": {
@@ -233,11 +240,19 @@
           "type": "array"
         }
       },
-      "required": ["remove_dirty_worktree", "force_remove_requires_human_confirmation"],
+      "required": [
+        "remove_dirty_worktree",
+        "force_remove_requires_human_confirmation"
+      ],
       "type": "object"
     }
   },
-  "required": ["primary_workspace", "branch_policy", "worktree_policy", "post_merge_cleanup"],
+  "required": [
+    "primary_workspace",
+    "branch_policy",
+    "worktree_policy",
+    "post_merge_cleanup"
+  ],
   "title": "Политика жизненного цикла веток/worktree (Git Workspace Hygiene)",
   "type": "object"
 }

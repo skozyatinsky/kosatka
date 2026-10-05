@@ -4,7 +4,10 @@
   "title": "Dead code scan scope",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "exclusions"],
+  "required": [
+    "schema_version",
+    "exclusions"
+  ],
   "properties": {
     "schema_version": {
       "type": "string"
@@ -14,7 +17,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["exclusion_id", "path", "category", "reason", "owner"],
+        "required": [
+          "exclusion_id",
+          "path",
+          "category",
+          "reason",
+          "owner"
+        ],
         "properties": {
           "exclusion_id": {
             "type": "string",

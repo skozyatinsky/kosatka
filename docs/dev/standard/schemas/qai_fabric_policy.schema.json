@@ -9,7 +9,10 @@
       "properties": {
         "profile": {
           "description": "какая из commands гоняется в CI — smoke/validate, не nightly (дорогой прогон не на каждый PR)",
-          "enum": ["validate", "smoke"],
+          "enum": [
+            "validate",
+            "smoke"
+          ],
           "type": "string"
         },
         "run_on_pull_request": {
@@ -63,7 +66,10 @@
     },
     "mode": {
       "description": "optional_adapter — стандарт не требует внешний QA-инструмент; required — осознанно для конкретного проекта",
-      "enum": ["optional_adapter", "required"],
+      "enum": [
+        "optional_adapter",
+        "required"
+      ],
       "type": "string",
       "x-aps-rule": {
         "id": "APS-SCHEMA-QAIFABRICPOLICYSCH-DF0E-001",
@@ -112,23 +118,34 @@
       "additionalProperties": false,
       "properties": {
         "notify_on_failure": {
-          "enum": [true],
+          "enum": [
+            true
+          ],
           "type": "boolean"
         },
         "orchestrator": {
           "description": "только automation_server (AUTOMATION_SERVER_SYNC_STANDARD) — иначе теряется lock/notify/retention",
-          "enum": ["automation_server"],
+          "enum": [
+            "automation_server"
+          ],
           "type": "string"
         },
         "profile": {
-          "enum": ["validate", "smoke", "nightly"],
+          "enum": [
+            "validate",
+            "smoke",
+            "nightly"
+          ],
           "type": "string"
         }
       },
       "type": "object"
     }
   },
-  "required": ["quality_profile", "enabled"],
+  "required": [
+    "quality_profile",
+    "enabled"
+  ],
   "title": "Политика подключения QAI Fabric — когда и как включать внешний QA-адаптер",
   "type": "object"
 }

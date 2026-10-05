@@ -39,7 +39,10 @@
           },
           "evidence_kind": {
             "description": "Structured evidence kind.",
-            "enum": ["validator", "test"],
+            "enum": [
+              "validator",
+              "test"
+            ],
             "type": "string"
           },
           "expected_exit_codes": {
@@ -136,7 +139,13 @@
             "type": "number"
           }
         },
-        "required": ["id", "description", "argv", "approved_by", "approved_at"],
+        "required": [
+          "id",
+          "description",
+          "argv",
+          "approved_by",
+          "approved_at"
+        ],
         "type": "object"
       },
       "type": "array"
@@ -146,7 +155,9 @@
       "type": "string"
     }
   },
-  "required": ["checks"],
+  "required": [
+    "checks"
+  ],
   "title": "Реестр утверждённых машинных проверок (trusted check registry)",
   "type": "object"
 }

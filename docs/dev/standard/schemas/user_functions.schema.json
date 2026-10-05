@@ -5,10 +5,14 @@
     "additionalProperties": true,
     "anyOf": [
       {
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       {
-        "required": ["function_id"]
+        "required": [
+          "function_id"
+        ]
       }
     ],
     "properties": {
@@ -61,8 +65,16 @@
         "type": "string"
       },
       "duplicate_class": {
-        "enum": ["INTENTIONAL_ALIAS", "APPROVED_REPLACEMENT", "NO_DUPLICATE", null],
-        "type": ["string", "null"]
+        "enum": [
+          "INTENTIONAL_ALIAS",
+          "APPROVED_REPLACEMENT",
+          "NO_DUPLICATE",
+          null
+        ],
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "duplicate_owner": {
         "type": "string"
@@ -75,11 +87,18 @@
         "description": "Двери в функцию. У решений экосистемы их две: визуальная (человек тыкает мышкой) и через нейропомощника. До v2.9.173 поле было массивом произвольных объектов, и парк разошёлся: 23 записи писали {cmd}, 7 — {command, type}, обе означали одно.",
         "items": {
           "type": "object",
-          "required": ["kind", "ref"],
+          "required": [
+            "kind",
+            "ref"
+          ],
           "additionalProperties": false,
           "properties": {
             "kind": {
-              "enum": ["ui", "assistant", "cli"],
+              "enum": [
+                "ui",
+                "assistant",
+                "cli"
+              ],
               "description": "ui — экран и элемент, куда нажимает человек; assistant — имя команды в каталоге команд продукта, которой вызывает нейропомощник; cli — команда оболочки. Список намеренно короткий: значения добавляются по факту появления, не впрок."
             },
             "ref": {
@@ -106,7 +125,10 @@
       },
       "fencing_token": {
         "minimum": 1,
-        "type": ["integer", "null"]
+        "type": [
+          "integer",
+          "null"
+        ]
       },
       "function_id": {
         "pattern": "^[a-z0-9][a-z0-9._-]*$",
@@ -117,22 +139,34 @@
         "type": "string"
       },
       "implementation_commit": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "introduced_by_task": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "introduced_in": {
         "type": "string"
       },
       "introduced_in_version": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "last_changed": {
         "type": "string"
       },
       "lease_id": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "lifecycle_state": {
         "enum": [
@@ -161,7 +195,10 @@
         "type": "array"
       },
       "merged_commit": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "migration_plan": {
         "type": "string"
@@ -176,8 +213,15 @@
         "type": "string"
       },
       "post_merge_validation": {
-        "enum": ["PASS", "FAIL", null],
-        "type": ["string", "null"]
+        "enum": [
+          "PASS",
+          "FAIL",
+          null
+        ],
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "preconditions": {
         "items": {
@@ -186,15 +230,26 @@
         "type": "array"
       },
       "previous_lifecycle_state": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "priority": {
-        "enum": ["critical", "high", "normal", "low"],
+        "enum": [
+          "critical",
+          "high",
+          "normal",
+          "low"
+        ],
         "type": "string"
       },
       "public_entrypoints": {
         "items": {
-          "type": ["string", "object"]
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "type": "array"
       },
@@ -220,7 +275,14 @@
         "type": "string"
       },
       "status": {
-        "enum": ["ACTIVE", "WIP", "PLANNED", "DEPRECATED", "REMOVED", "DONE"],
+        "enum": [
+          "ACTIVE",
+          "WIP",
+          "PLANNED",
+          "DEPRECATED",
+          "REMOVED",
+          "DONE"
+        ],
         "type": "string"
       },
       "summary": {
@@ -234,7 +296,10 @@
         "type": "array"
       },
       "task_id": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       },
       "test_data": {
         "type": "object"
@@ -275,10 +340,17 @@
         "type": "string"
       },
       "verified_attestation": {
-        "type": ["string", "null"]
+        "type": [
+          "string",
+          "null"
+        ]
       }
     },
-    "required": ["title", "status", "summary"],
+    "required": [
+      "title",
+      "status",
+      "summary"
+    ],
     "type": "object"
   },
   "title": "User-function inventory and lifecycle",

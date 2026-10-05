@@ -39,7 +39,7 @@
             "required": ["method", "path"],
             "additionalProperties": false,
             "properties": {
-              "method": { "enum": ["GET", "POST"] },
+              "method": {"enum": ["GET", "POST"]},
               "path": {
                 "type": "string",
                 "minLength": 1,

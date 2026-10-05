@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "materials"],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {"type": "integer", "const": 1},
     "materials": {
       "type": "array",
       "items": {
@@ -14,12 +14,10 @@
         "additionalProperties": false,
         "required": ["path", "classification", "related_tz", "notes"],
         "properties": {
-          "path": { "type": "string", "minLength": 1 },
-          "classification": {
-            "enum": ["released", "open_tz", "reference_material", "audit_archive", "other_project"]
-          },
-          "related_tz": { "type": ["string", "null"] },
-          "notes": { "type": "string" }
+          "path": {"type": "string", "minLength": 1},
+          "classification": {"enum": ["released", "open_tz", "reference_material", "audit_archive", "other_project"]},
+          "related_tz": {"type": ["string", "null"]},
+          "notes": {"type": "string"}
         }
       }
     }

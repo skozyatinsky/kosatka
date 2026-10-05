@@ -2,17 +2,18 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
-    "after": { "type": "object" },
-    "before": { "type": "object" },
-    "command": { "items": { "type": "string" }, "minItems": 1, "type": "array" },
-    "command_exit_code": { "type": "integer" },
+    "after": {"type": "object"},
+    "before": {"type": "object"},
+    "command": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
+    "command_exit_code": {"type": "integer"},
+    "expected_exit_codes": {"items": {"type": "integer"}, "minItems": 1, "type": "array", "uniqueItems": true},
     "findings": {
       "items": {
         "additionalProperties": true,
         "properties": {
-          "code": { "minLength": 1, "type": "string" },
-          "rule_id": { "pattern": "^APS-[A-Z0-9][A-Z0-9._-]*$", "type": "string" },
-          "severity": { "type": "string" }
+          "code": {"minLength": 1, "type": "string"},
+          "rule_id": {"pattern": "^APS-[A-Z0-9][A-Z0-9._-]*$", "type": "string"},
+          "severity": {"type": "string"}
         },
         "required": ["code", "rule_id", "severity"],
         "type": "object"
@@ -24,28 +25,22 @@
         "APS-PROMPT-AUDIT-STANDARD-001",
         "APS-PROMPT-AUDIT-TZ-001",
         "APS-PROMPT-AUDIT-GIT-001",
-        "APS-PROMPT-AUDIT-MATCHING-001"
+        "APS-PROMPT-AUDIT-MATCHING-001",
+        "APS-PROMPT-AUDIT-DOCUMENTS-001",
+        "APS-PROMPT-AUDIT-REACHABLE-NEVER-EXECUTED-001",
+        "APS-PROMPT-AUDIT-TZ-LIFECYCLE-001"
       ],
       "type": "string"
     },
-    "root": { "minLength": 1, "type": "string" },
-    "schema_version": { "const": "1.0.0" },
-    "status": { "enum": ["PASS", "COMMAND_FAILED", "MUTATION_DETECTED"] },
-    "stderr": { "type": "string" },
-    "stdout": { "type": "string" }
+    "root": {"minLength": 1, "type": "string"},
+    "schema_version": {"const": "1.0.0"},
+    "status": {"enum": ["PASS", "COMMAND_FAILED", "MUTATION_DETECTED"]},
+    "stderr": {"type": "string"},
+    "stdout": {"type": "string"}
   },
   "required": [
-    "schema_version",
-    "prompt_id",
-    "root",
-    "command",
-    "command_exit_code",
-    "stdout",
-    "stderr",
-    "before",
-    "after",
-    "findings",
-    "status"
+    "schema_version", "prompt_id", "root", "command", "command_exit_code",
+    "stdout", "stderr", "before", "after", "findings", "status"
   ],
   "type": "object"
 }

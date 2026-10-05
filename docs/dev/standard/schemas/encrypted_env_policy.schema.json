@@ -3,12 +3,20 @@
   "$id": "encrypted_env_policy.schema.json",
   "title": "Политика зашифрованного .env (секреты через Git)",
   "type": "object",
-  "required": ["format", "encrypted_file", "tool", "loader", "passphrase_env"],
+  "required": [
+    "format",
+    "encrypted_file",
+    "tool",
+    "loader",
+    "passphrase_env"
+  ],
   "additionalProperties": false,
   "properties": {
     "format": {
       "type": "string",
-      "enum": ["env.enc"]
+      "enum": [
+        "env.enc"
+      ]
     },
     "plaintext_file": {
       "type": "string"

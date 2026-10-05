@@ -38,7 +38,10 @@
     },
     "fail_mode": {
       "description": "поведение при недоступности Hub: fail-closed — доступ к функциональности блокируется, fail-open — доступ разрешается по последнему известному/дефолтному состоянию",
-      "enum": ["fail-closed", "fail-open"],
+      "enum": [
+        "fail-closed",
+        "fail-open"
+      ],
       "type": "string"
     },
     "fail_open_reason": {
@@ -74,7 +77,12 @@
       "type": "object"
     }
   },
-  "required": ["hub_url_env", "entitlements_ref", "fail_mode", "cache_ttl_seconds"],
+  "required": [
+    "hub_url_env",
+    "entitlements_ref",
+    "fail_mode",
+    "cache_ttl_seconds"
+  ],
   "title": "Обзорная политика интеграции с License-сервером",
   "type": "object"
 }
