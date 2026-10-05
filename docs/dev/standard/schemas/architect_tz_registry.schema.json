@@ -6,45 +6,24 @@
   "additionalProperties": false,
   "required": ["schema_version", "technical_specs"],
   "properties": {
-    "schema_version": { "type": "integer", "const": 1 },
+    "schema_version": {"type": "integer", "const": 1},
     "technical_specs": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "tz_id",
-          "path",
-          "status",
-          "priority",
-          "scope",
-          "owner",
-          "evidence_refs",
-          "introduced_at",
-          "updated_at",
-          "supersedes"
-        ],
+        "required": ["tz_id", "path", "status", "priority", "scope", "owner", "evidence_refs", "introduced_at", "updated_at", "supersedes"],
         "properties": {
-          "tz_id": { "type": "string", "pattern": "^TZ-[0-9]+$" },
-          "path": { "type": "string", "minLength": 1 },
-          "status": {
-            "enum": [
-              "TODO",
-              "IN_PROGRESS",
-              "BLOCKED",
-              "DONE",
-              "ARCHIVED",
-              "REFERENCE",
-              "OTHER_PROJECT"
-            ]
-          },
-          "priority": { "type": "string", "minLength": 1 },
-          "scope": { "type": "string", "minLength": 1 },
-          "owner": { "type": "string", "minLength": 1 },
-          "evidence_refs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
-          "introduced_at": { "type": "string", "format": "date" },
-          "updated_at": { "type": "string", "format": "date" },
-          "supersedes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          "tz_id": {"type": "string", "pattern": "^TZ-[0-9]+$"},
+          "path": {"type": "string", "minLength": 1},
+          "status": {"enum": ["TODO", "IN_PROGRESS", "BLOCKED", "DONE", "ARCHIVED", "REFERENCE", "OTHER_PROJECT"]},
+          "priority": {"type": "string", "minLength": 1},
+          "scope": {"type": "string", "minLength": 1},
+          "owner": {"type": "string", "minLength": 1},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "introduced_at": {"type": "string", "format": "date"},
+          "updated_at": {"type": "string", "format": "date"},
+          "supersedes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
         }
       }
     }

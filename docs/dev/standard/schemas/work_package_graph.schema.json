@@ -31,7 +31,7 @@
           },
           "depends_on": {
             "type": "array",
-            "items": { "type": "string", "minLength": 1 },
+            "items": {"type": "string", "minLength": 1},
             "uniqueItems": true,
             "description": "id других work package, которые должны завершиться (DONE) раньше этого"
           }

@@ -25,7 +25,10 @@
             "type": "string"
           },
           "entrypoint_reference": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "evidence": {
             "items": {
@@ -72,11 +75,20 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "path", "pointer"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "path",
+                    "pointer"
+                  ],
                   "type": "object"
                 },
                 {
@@ -121,11 +133,20 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "path", "anchor"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "path",
+                    "anchor"
+                  ],
                   "type": "object"
                 },
                 {
@@ -159,11 +180,19 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "node_id"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "node_id"
+                  ],
                   "type": "object"
                 }
               ]
@@ -219,7 +248,10 @@
       "const": "1.0.0"
     }
   },
-  "required": ["schema_version", "entries"],
+  "required": [
+    "schema_version",
+    "entries"
+  ],
   "title": "Dead Code Allowlist",
   "type": "object"
 }

@@ -6,9 +6,9 @@
   "required": ["default_mode"],
   "additionalProperties": false,
   "properties": {
-    "default_mode": { "type": "string", "enum": ["plain", "business", "technical"] },
+    "default_mode": {"type": "string", "enum": ["plain", "business", "technical"]},
     "domain": {},
-    "show_mode_note": { "type": "boolean" },
-    "allowed_domain_terms": { "type": "array", "items": { "type": "string" } }
+    "show_mode_note": {"type": "boolean"},
+    "allowed_domain_terms": {"type": "array", "items": {"type": "string"}}
   }
 }

@@ -23,17 +23,28 @@
             "type": "integer"
           },
           "expected_finding_code": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "polarity": {
-            "enum": ["positive", "negative", "bypass"]
+            "enum": [
+              "positive",
+              "negative",
+              "bypass"
+            ]
           },
           "pytest_node_id": {
             "type": "string"
           },
           "required_platforms": {
             "items": {
-              "enum": ["darwin", "linux", "windows"]
+              "enum": [
+                "darwin",
+                "linux",
+                "windows"
+              ]
             },
             "minItems": 1,
             "type": "array",
@@ -61,7 +72,10 @@
       "const": "1.0.0"
     }
   },
-  "required": ["schema_version", "cases"],
+  "required": [
+    "schema_version",
+    "cases"
+  ],
   "title": "Executable capability evidence cases",
   "type": "object"
 }

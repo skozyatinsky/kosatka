@@ -8,13 +8,13 @@
     "required": ["field", "source", "type", "required"],
     "additionalProperties": false,
     "properties": {
-      "field": { "type": "string" },
-      "source": { "type": "string", "description": ".env / config-файл / pyproject и т.п." },
-      "type": { "type": "string" },
+      "field": {"type": "string"},
+      "source": {"type": "string", "description": ".env / config-файл / pyproject и т.п."},
+      "type": {"type": "string"},
       "default": {},
-      "allowed_values": { "type": "array", "description": "допустимые значения (enum); опц." },
-      "required": { "type": "boolean" },
-      "description": { "type": "string" }
+      "allowed_values": {"type": "array", "description": "допустимые значения (enum); опц."},
+      "required": {"type": "boolean"},
+      "description": {"type": "string"}
     }
   }
 }

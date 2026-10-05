@@ -173,6 +173,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prompt-id", required=True, choices=sorted(READ_ONLY_PROMPT_IDS))
     parser.add_argument("--evidence", required=True)
     parser.add_argument("--input", action="append", default=[])
+    parser.add_argument(
+        "--expected-exit-code", action="append", type=int, dest="expected_exit_codes",
+        help="Допустимый код возврата команды (можно повторять). По умолчанию только 0. "
+             "Нужен аудитам, у которых код 1 означает «найдены замечания», а не сбой запуска.",
+    )
     parser.add_argument("command", nargs=argparse.REMAINDER)
     return parser.parse_args()
 
@@ -187,6 +192,7 @@ def main() -> int:
     if not command:
         print("audit command is required", file=sys.stderr)
         return 2
+    expected_exit_codes = sorted(set(args.expected_exit_codes or [0]))
     inputs = [Path(value).resolve() for value in args.input]
     try:
         before = capture_state(root, inputs)
@@ -209,12 +215,13 @@ def main() -> int:
         "root": str(root),
         "command": command,
         "command_exit_code": proc.returncode,
+        "expected_exit_codes": expected_exit_codes,
         "stdout": proc.stdout,
         "stderr": proc.stderr,
         "before": before,
         "after": after,
         "findings": [item.as_dict() for item in findings],
-        "status": "PASS" if not findings and proc.returncode == 0 else ("MUTATION_DETECTED" if findings else "COMMAND_FAILED"),
+        "status": "PASS" if not findings and proc.returncode in expected_exit_codes else ("MUTATION_DETECTED" if findings else "COMMAND_FAILED"),
     }
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -222,7 +229,7 @@ def main() -> int:
         print("APS_AUDIT_DIAGNOSTIC:" + json.dumps(item.as_dict(), ensure_ascii=False, sort_keys=True, separators=(",", ":")))
     if findings:
         return 3
-    return proc.returncode
+    return 0 if proc.returncode in expected_exit_codes else proc.returncode
 
 
 if __name__ == "__main__":

@@ -11,11 +11,21 @@
         "properties": {
           "decision": {
             "description": "red_flags_found непуст допускает только approved_with_waiver, не тихий approved",
-            "enum": ["approved", "rejected", "approved_with_waiver"],
+            "enum": [
+              "approved",
+              "rejected",
+              "approved_with_waiver"
+            ],
             "type": "string"
           },
           "kind": {
-            "enum": ["skill", "mcp_server", "plugin", "cli_tool", "library"],
+            "enum": [
+              "skill",
+              "mcp_server",
+              "plugin",
+              "cli_tool",
+              "library"
+            ],
             "type": "string"
           },
           "name": {
@@ -70,7 +80,12 @@
           },
           "source": {
             "description": "package/library — свои, уже доверенные слои парка, ревью не обязательно; external/unknown требует ИБ-ревью с evidence (decision=approved/approved_with_waiver без evidence-полей — ошибка); explicit waiver (approved_with_waiver + waiver_reason) жёстко обязателен только при непустом red_flags_found — external/unknown без находок и decision=approved даёт предупреждение, не ошибку (аналогично skills.manifest.json source)",
-            "enum": ["package", "library", "external", "unknown"],
+            "enum": [
+              "package",
+              "library",
+              "external",
+              "unknown"
+            ],
             "type": "string",
             "x-aps-rule": {
               "id": "APS-SCHEMA-TOOLINGSECURITYREV-74FA-001",
@@ -92,13 +107,20 @@
             "type": "string"
           }
         },
-        "required": ["name", "kind", "source", "decision"],
+        "required": [
+          "name",
+          "kind",
+          "source",
+          "decision"
+        ],
         "type": "object"
       },
       "type": "array"
     }
   },
-  "required": ["reviews"],
+  "required": [
+    "reviews"
+  ],
   "title": "Журнал ИБ-ревью внешнего AI-агентного инструментария",
   "type": "object"
 }

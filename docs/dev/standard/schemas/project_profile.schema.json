@@ -6,7 +6,13 @@
   "properties": {
     "autonomy_level": {
       "description": "Проектный уровень автономности; A2-A4 требуют только trusted check_ref, legacy argv запрещён.",
-      "enum": ["A0", "A1", "A2", "A3", "A4"],
+      "enum": [
+        "A0",
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+      ],
       "type": "string"
     },
     "parallel_ai_development": {

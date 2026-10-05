@@ -44,7 +44,9 @@
             "type": "string"
           }
         },
-        "required": ["module_code"],
+        "required": [
+          "module_code"
+        ],
         "type": "object"
       },
       "type": "array"

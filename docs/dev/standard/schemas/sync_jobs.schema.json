@@ -3,7 +3,10 @@
   "$id": "sync_jobs.schema.json",
   "title": "Каналы синхронизации ноутбук/сервер по классам данных",
   "type": "object",
-  "required": ["transport", "jobs"],
+  "required": [
+    "transport",
+    "jobs"
+  ],
   "additionalProperties": false,
   "properties": {
     "transport": {
@@ -18,7 +21,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "role"],
+        "required": [
+          "name",
+          "role"
+        ],
         "properties": {
           "name": {
             "type": "string"
@@ -37,22 +43,42 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "class", "tool", "mode"],
+        "required": [
+          "id",
+          "class",
+          "tool",
+          "mode"
+        ],
         "properties": {
           "id": {
             "type": "string"
           },
           "class": {
             "type": "string",
-            "enum": ["code", "documents", "large_data", "backup", "secrets"]
+            "enum": [
+              "code",
+              "documents",
+              "large_data",
+              "backup",
+              "secrets"
+            ]
           },
           "tool": {
             "type": "string",
-            "enum": ["git", "syncthing", "rsync", "restic"]
+            "enum": [
+              "git",
+              "syncthing",
+              "rsync",
+              "restic"
+            ]
           },
           "mode": {
             "type": "string",
-            "enum": ["bidirectional", "one_way", "snapshot"]
+            "enum": [
+              "bidirectional",
+              "one_way",
+              "snapshot"
+            ]
           },
           "direction": {
             "type": "string"

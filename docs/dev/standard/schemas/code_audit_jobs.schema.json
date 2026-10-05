@@ -3,17 +3,25 @@
   "$id": "code_audit_jobs.schema.json",
   "title": "Три момента проверки кода: after-task, CI, scheduled",
   "type": "object",
-  "required": ["after_task", "ci", "scheduled"],
+  "required": [
+    "after_task",
+    "ci",
+    "scheduled"
+  ],
   "additionalProperties": false,
   "properties": {
     "after_task": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["commands"],
+      "required": [
+        "commands"
+      ],
       "properties": {
         "required": {
           "type": "boolean",
-          "enum": [true]
+          "enum": [
+            true
+          ]
         },
         "commands": {
           "type": "array",
@@ -27,11 +35,15 @@
     "ci": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["on"],
+      "required": [
+        "on"
+      ],
       "properties": {
         "required": {
           "type": "boolean",
-          "enum": [true]
+          "enum": [
+            true
+          ]
         },
         "on": {
           "type": "array",
@@ -51,7 +63,9 @@
     "scheduled": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["orchestrator"],
+      "required": [
+        "orchestrator"
+      ],
       "properties": {
         "orchestrator": {
           "type": "string"
@@ -61,7 +75,11 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "command", "notify_on_failure"],
+            "required": [
+              "id",
+              "command",
+              "notify_on_failure"
+            ],
             "properties": {
               "id": {
                 "type": "string"
@@ -71,7 +89,9 @@
               },
               "notify_on_failure": {
                 "type": "boolean",
-                "enum": [true]
+                "enum": [
+                  true
+                ]
               }
             }
           }
@@ -81,7 +101,11 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "command", "notify_on_failure"],
+            "required": [
+              "id",
+              "command",
+              "notify_on_failure"
+            ],
             "properties": {
               "id": {
                 "type": "string"
@@ -91,7 +115,9 @@
               },
               "notify_on_failure": {
                 "type": "boolean",
-                "enum": [true]
+                "enum": [
+                  true
+                ]
               }
             }
           }
@@ -106,7 +132,10 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["optional_adapter", "required"]
+            "enum": [
+              "optional_adapter",
+              "required"
+            ]
           },
           "role": {
             "type": "string"
@@ -121,7 +150,10 @@
       "type": "array",
       "items": {
         "type": "string",
-        "enum": ["hardcode", "data_in_code"]
+        "enum": [
+          "hardcode",
+          "data_in_code"
+        ]
       }
     }
   }

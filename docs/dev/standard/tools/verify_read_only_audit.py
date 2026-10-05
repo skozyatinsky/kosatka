@@ -41,7 +41,11 @@ def verify_evidence(data: dict[str, Any], root: Path | None = None) -> list[str]
     recomputed_codes = sorted(item.code for item in recomputed)
     if recorded_codes != recomputed_codes:
         findings.append("READ_ONLY_AUDIT_EVIDENCE_FINDINGS_MISMATCH")
-    expected_status = "PASS" if not recomputed and data.get("command_exit_code") == 0 else ("MUTATION_DETECTED" if recomputed else "COMMAND_FAILED")
+    expected_codes = data.get("expected_exit_codes", [0])
+    if not isinstance(expected_codes, list) or not expected_codes or not all(type(code) is int for code in expected_codes):
+        findings.append("READ_ONLY_AUDIT_EVIDENCE_INVALID")
+        return sorted(set(findings))
+    expected_status = "PASS" if not recomputed and data.get("command_exit_code") in expected_codes else ("MUTATION_DETECTED" if recomputed else "COMMAND_FAILED")
     if data.get("status") != expected_status:
         findings.append("READ_ONLY_AUDIT_EVIDENCE_STATUS_MISMATCH")
     for record in after.get("inputs", []):

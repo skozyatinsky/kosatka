@@ -12,7 +12,13 @@
             "type": "string"
           },
           "contract_type": {
-            "enum": ["entrypoint", "public_api", "migration", "deprecation", "trusted_manifest"]
+            "enum": [
+              "entrypoint",
+              "public_api",
+              "migration",
+              "deprecation",
+              "trusted_manifest"
+            ]
           },
           "owner": {
             "minLength": 1,
@@ -65,7 +71,11 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "standard_version", "bindings"],
+  "required": [
+    "schema_version",
+    "standard_version",
+    "bindings"
+  ],
   "title": "Dead Code Evidence Bindings",
   "type": "object"
 }

@@ -8,12 +8,12 @@
     "required": ["variable", "required"],
     "additionalProperties": false,
     "properties": {
-      "variable": { "type": "string" },
-      "required": { "type": "boolean" },
+      "variable": {"type": "string"},
+      "required": {"type": "boolean"},
       "default": {},
-      "used_in": { "type": "array", "items": { "type": "string" }, "description": "пути в коде" },
-      "secret": { "type": "boolean", "description": "содержит секрет — не логировать" },
-      "description": { "type": "string" }
+      "used_in": {"type": "array", "items": {"type": "string"}, "description": "пути в коде"},
+      "secret": {"type": "boolean", "description": "содержит секрет — не логировать"},
+      "description": {"type": "string"}
     }
   }
 }

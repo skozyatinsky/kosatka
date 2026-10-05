@@ -42,7 +42,11 @@
       "type": "string"
     },
     "profile_id": {
-      "enum": ["parallel_ai", "autonomous_ai", "controlled_automatic_merge"]
+      "enum": [
+        "parallel_ai",
+        "autonomous_ai",
+        "controlled_automatic_merge"
+      ]
     },
     "sandbox_profile_digest": {
       "pattern": "^[0-9a-f]{64}$",

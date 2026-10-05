@@ -6,29 +6,20 @@
   "items": {
     "type": "object",
     "additionalProperties": false,
-    "required": [
-      "function_id",
-      "task_id",
-      "path",
-      "symbol",
-      "kind",
-      "status",
-      "approved_by",
-      "approved_at"
-    ],
+    "required": ["function_id", "task_id", "path", "symbol", "kind", "status", "approved_by", "approved_at"],
     "properties": {
-      "function_id": { "type": "string", "minLength": 1 },
-      "task_id": { "type": "string", "minLength": 1 },
-      "path": { "type": "string", "minLength": 1 },
-      "symbol": { "type": "string", "minLength": 1 },
-      "kind": { "type": "string" },
-      "signature": { "type": ["string", "null"] },
-      "user_function_ids": { "type": "array", "items": { "type": "string" } },
-      "status": { "enum": ["APPROVED", "ACTIVATED", "CANCELLED"] },
-      "approved_by": { "type": "string", "minLength": 1 },
-      "approved_at": { "type": "string", "format": "date-time" },
-      "activated_commit": { "type": ["string", "null"] },
-      "rationale": { "type": "string" }
+      "function_id": {"type": "string", "minLength": 1},
+      "task_id": {"type": "string", "minLength": 1},
+      "path": {"type": "string", "minLength": 1},
+      "symbol": {"type": "string", "minLength": 1},
+      "kind": {"type": "string"},
+      "signature": {"type": ["string", "null"]},
+      "user_function_ids": {"type": "array", "items": {"type": "string"}},
+      "status": {"enum": ["APPROVED", "ACTIVATED", "CANCELLED"]},
+      "approved_by": {"type": "string", "minLength": 1},
+      "approved_at": {"type": "string", "format": "date-time"},
+      "activated_commit": {"type": ["string", "null"]},
+      "rationale": {"type": "string"}
     }
   }
 }
