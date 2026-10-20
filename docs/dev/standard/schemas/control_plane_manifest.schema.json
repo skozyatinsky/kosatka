@@ -28,7 +28,10 @@
       "type": "object"
     },
     "change_policy": {
-      "enum": ["separate_governance_pr", "trusted_intent_plus_controlled_activation"]
+      "enum": [
+        "separate_governance_pr",
+        "trusted_intent_plus_controlled_activation"
+      ]
     },
     "controlled_activation_paths": {
       "items": {
@@ -246,7 +249,11 @@
       "uniqueItems": true
     },
     "protocol_version": {
-      "enum": ["1.1", "2.0", "2.1"],
+      "enum": [
+        "1.1",
+        "2.0",
+        "2.1"
+      ],
       "type": "string"
     },
     "version": {

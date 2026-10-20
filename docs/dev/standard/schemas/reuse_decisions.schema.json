@@ -48,7 +48,10 @@
                 "additionalProperties": false,
                 "properties": {
                   "kind": {
-                    "enum": ["sha256", "git_commit"],
+                    "enum": [
+                      "sha256",
+                      "git_commit"
+                    ],
                     "type": "string"
                   },
                   "value": {
@@ -56,7 +59,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["kind", "value"],
+                "required": [
+                  "kind",
+                  "value"
+                ],
                 "type": "object"
               },
               "version": {
@@ -64,7 +70,12 @@
                 "type": "string"
               }
             },
-            "required": ["manifest_path", "declaration", "version", "pin"],
+            "required": [
+              "manifest_path",
+              "declaration",
+              "version",
+              "pin"
+            ],
             "type": "object"
           },
           "evidence": {
@@ -91,7 +102,11 @@
                 "type": "string"
               }
             },
-            "required": ["path", "command", "canon_marker"],
+            "required": [
+              "path",
+              "command",
+              "canon_marker"
+            ],
             "type": "object"
           },
           "machine_contract": {
@@ -106,7 +121,11 @@
                 "type": "string"
               },
               "mode": {
-                "enum": ["owner_reference", "package", "generated"],
+                "enum": [
+                  "owner_reference",
+                  "package",
+                  "generated"
+                ],
                 "type": "string"
               },
               "owner_path": {
@@ -122,7 +141,12 @@
                 "type": "string"
               }
             },
-            "required": ["mode", "owner_repository", "owner_path", "source_sha256"],
+            "required": [
+              "mode",
+              "owner_repository",
+              "owner_path",
+              "source_sha256"
+            ],
             "type": "object"
           },
           "proposal_adr": {
@@ -138,7 +162,13 @@
             "type": "string"
           },
           "status": {
-            "enum": ["adopted", "expected", "local", "waiver", "proposed"],
+            "enum": [
+              "adopted",
+              "expected",
+              "local",
+              "waiver",
+              "proposed"
+            ],
             "type": "string"
           },
           "waiver": {
@@ -165,11 +195,24 @@
                 "type": "string"
               }
             },
-            "required": ["adr", "owner", "expires_on", "reason", "removal_condition"],
+            "required": [
+              "adr",
+              "owner",
+              "expires_on",
+              "reason",
+              "removal_condition"
+            ],
             "type": "object"
           }
         },
-        "required": ["decision_id", "capability", "class", "status", "rationale", "evidence"],
+        "required": [
+          "decision_id",
+          "capability",
+          "class",
+          "status",
+          "rationale",
+          "evidence"
+        ],
         "type": "object"
       },
       "minItems": 1,
@@ -207,7 +250,14 @@
           "type": "string"
         }
       },
-      "required": ["mode", "repository", "path", "version", "commit", "sha256"],
+      "required": [
+        "mode",
+        "repository",
+        "path",
+        "version",
+        "commit",
+        "sha256"
+      ],
       "type": "object"
     },
     "schema_version": {
@@ -215,7 +265,12 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "project_id", "registry_source", "decisions"],
+  "required": [
+    "schema_version",
+    "project_id",
+    "registry_source",
+    "decisions"
+  ],
   "title": "Локальные решения о переиспользовании экосистемы",
   "type": "object"
 }

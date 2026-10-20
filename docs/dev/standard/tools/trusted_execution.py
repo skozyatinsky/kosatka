@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ======================================================================
-# trusted_execution.py — версия 3.0
+# trusted_execution.py — версия 3.0.1
 # Immutable candidate execution with secret-free environment and cleanup.
 # ======================================================================
 from __future__ import annotations
@@ -325,6 +325,10 @@ def _prepare_candidate_execution(
     sandbox_adapter_available = False
     if platform.system() == "Linux" and shutil.which("unshare"):
         wrapper = Path(__file__).resolve().parent / "candidate_sandbox.py"
+        # Ссылка вида /usr/bin/python3 -> /etc/alternatives/... ведёт за
+        # пределы частного корня: исполняем сам файл, а не ссылку.
+        if command and Path(command[0]).is_absolute():
+            command[0] = str(Path(command[0]).resolve())
         sandbox = [
             "unshare", "-Urmpn", "--fork", sys.executable, str(wrapper),
             "--workspace", str(root), "--workdir", "/workspace",

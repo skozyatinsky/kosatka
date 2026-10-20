@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ======================================================================
-# candidate_sandbox.py — версия 2.0
+# candidate_sandbox.py — версия 2.0.1
 # Private-root Linux namespace adapter for untrusted candidate code.
 # ======================================================================
 from __future__ import annotations
@@ -69,6 +69,21 @@ def _bind_readonly(source: Path, target: Path) -> None:
         _run(["mount", "-o", "remount,bind,ro,nosuid,nodev", str(target)])
 
 
+def _without_covered(paths: list[Path], covered: list[Path]) -> list[Path]:
+    """Drop paths already exposed by an earlier read-only mount.
+
+    A path equal to or below a mounted directory is visible through that
+    mount; binding it again would create a mount point inside a read-only
+    tree and fail with EROFS (for example a Python prefix of ``/usr``).
+    """
+    kept: list[Path] = []
+    for path in sorted(set(paths), key=lambda item: (len(item.parts), str(item))):
+        if any(path == base or base in path.parents for base in [*covered, *kept]):
+            continue
+        kept.append(path)
+    return kept
+
+
 def _bind_device(source: str, root: Path) -> None:
     target = root / source.lstrip("/")
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -134,9 +149,11 @@ def _prepare_root(workspace: Path, readonly_paths: list[Path], writable_paths: l
 
     # Runtime only: no /home, host /tmp, Docker socket, trusted DB or repository
     # siblings are mounted into the private root.
+    mounted: list[Path] = []
     for system_path in (Path("/usr"),):
         if system_path.exists():
             _bind_readonly(system_path, host_root / system_path.relative_to("/"))
+            mounted.append(system_path)
 
     for link_name in ("bin", "lib", "lib64", "sbin"):
         source = Path("/") / link_name
@@ -145,9 +162,9 @@ def _prepare_root(workspace: Path, readonly_paths: list[Path], writable_paths: l
             target.symlink_to(os.readlink(source))
         elif source.exists():
             _bind_readonly(source, target)
+            mounted.append(source)
 
-    for source in readonly_paths:
-        source = source.resolve()
+    for source in _without_covered([path.resolve() for path in readonly_paths], mounted):
         target = host_root / source.relative_to("/")
         _bind_readonly(source, target)
 

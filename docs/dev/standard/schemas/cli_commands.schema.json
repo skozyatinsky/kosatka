@@ -8,15 +8,12 @@
     "required": ["command", "implementation"],
     "additionalProperties": false,
     "properties": {
-      "command": { "type": "string" },
-      "implementation": { "type": "string", "description": "путь к реализации в коде" },
-      "arguments": { "type": "array", "items": { "type": "string" } },
-      "example": { "type": "string" },
-      "exit_codes": { "type": "object", "additionalProperties": { "type": "string" } },
-      "stability": {
-        "type": "string",
-        "enum": ["stable", "beta", "experimental", "internal", "deprecated"]
-      }
+      "command": {"type": "string"},
+      "implementation": {"type": "string", "description": "путь к реализации в коде"},
+      "arguments": {"type": "array", "items": {"type": "string"}},
+      "example": {"type": "string"},
+      "exit_codes": {"type": "object", "additionalProperties": {"type": "string"}},
+      "stability": {"type": "string", "enum": ["stable", "beta", "experimental", "internal", "deprecated"]}
     }
   }
 }

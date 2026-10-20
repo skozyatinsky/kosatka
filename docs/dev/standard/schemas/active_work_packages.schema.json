@@ -4,7 +4,9 @@
   "title": "Активные (сейчас выполняемые) work package — временная аренда scope",
   "description": "Машиночитаемая временная аренда write-scope на время выполнения задачи — отдельно от постоянного review-владения (code_ownership.json). Опциональный слой, реализует --check-work-package-overlap. См. MODULE_BOUNDARIES_STANDARD.md §10.4, AI_AGENT_WORK_ALLOCATION_STANDARD.md §10.",
   "type": "object",
-  "required": ["active"],
+  "required": [
+    "active"
+  ],
   "additionalProperties": false,
   "properties": {
     "version": {
@@ -16,7 +18,11 @@
       "description": "по одной записи на каждую сейчас выполняемую задачу",
       "items": {
         "type": "object",
-        "required": ["task_id", "status", "allowed_paths"],
+        "required": [
+          "task_id",
+          "status",
+          "allowed_paths"
+        ],
         "additionalProperties": false,
         "properties": {
           "task_id": {
@@ -27,7 +33,11 @@
           },
           "status": {
             "type": "string",
-            "enum": ["IN_PROGRESS", "PAUSED", "STALE"],
+            "enum": [
+              "IN_PROGRESS",
+              "PAUSED",
+              "STALE"
+            ],
             "description": "PAUSED — агент временно остановлен, но лицензия на scope ещё не отпущена (worktree/branch сохраняются). STALE (v2.9.118) — heartbeat_at не обновлялся дольше stale_after_seconds; check_work_package_overlap() не снимает такую аренду автоматически (см. поле ниже), только явно её флагует — снятие требует подтверждения человека/оркестратора. 'RELEASED' сознательно НЕ отдельное значение статуса: освобождение аренды — удаление записи из active[], не смена статуса на месте (запись со статусом 'освобождено', но всё ещё в active[], противоречива сама по себе)."
           },
           "branch": {
@@ -98,7 +108,10 @@
             "type": "string"
           },
           "access_mode": {
-            "enum": ["read", "write"]
+            "enum": [
+              "read",
+              "write"
+            ]
           }
         }
       }

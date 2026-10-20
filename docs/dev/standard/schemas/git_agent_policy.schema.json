@@ -3,7 +3,11 @@
   "$id": "git_agent_policy.schema.json",
   "title": "Политика git-поведения AI-агента (commit/push)",
   "type": "object",
-  "required": ["protected_branches", "commit_policy", "push_policy"],
+  "required": [
+    "protected_branches",
+    "commit_policy",
+    "push_policy"
+  ],
   "additionalProperties": false,
   "properties": {
     "protected_branches": {
@@ -35,7 +39,10 @@
     "push_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["forbid_force_push", "forbid_push_to_protected_branches"],
+      "required": [
+        "forbid_force_push",
+        "forbid_push_to_protected_branches"
+      ],
       "properties": {
         "auto_push_after_green": {
           "type": "boolean"

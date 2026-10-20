@@ -14,21 +14,33 @@
         "additionalProperties": false,
         "properties": {
           "allowlist_id": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "category": {
             "minLength": 1,
             "type": "string"
           },
           "confidence": {
-            "enum": ["LOW", "MEDIUM", "HIGH"]
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ]
           },
           "diagnostic_code": {
             "pattern": "^APS_DEAD_CODE_",
             "type": "string"
           },
           "disposition": {
-            "enum": ["OPEN", "ALLOWLISTED", "FIXED", "NOT_APPLICABLE"]
+            "enum": [
+              "OPEN",
+              "ALLOWLISTED",
+              "FIXED",
+              "NOT_APPLICABLE"
+            ]
           },
           "entrypoint_paths": {
             "items": {
@@ -67,7 +79,11 @@
             "type": "string"
           },
           "severity": {
-            "enum": ["INFO", "WARNING", "ERROR"]
+            "enum": [
+              "INFO",
+              "WARNING",
+              "ERROR"
+            ]
           },
           "symbol": {
             "minLength": 1,
@@ -82,7 +98,10 @@
           },
           "origin": {
             "type": "string",
-            "enum": ["introduced", "pre_existing"],
+            "enum": [
+              "introduced",
+              "pre_existing"
+            ],
             "description": "Появилась ли находка вместе с рассматриваемой правкой. Условия разметки — APS-DEAD-CODE-ORIGIN-001."
           }
         },
@@ -136,7 +155,12 @@
             "type": "string"
           },
           "contract_kind": {
-            "enum": ["compatibility_api", "plugin_hook", "library_api", "external_contract"]
+            "enum": [
+              "compatibility_api",
+              "plugin_hook",
+              "library_api",
+              "external_contract"
+            ]
           },
           "evidence": {
             "items": {
@@ -183,11 +207,20 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "path", "pointer"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "path",
+                    "pointer"
+                  ],
                   "type": "object"
                 },
                 {
@@ -232,11 +265,20 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "path", "anchor"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "path",
+                    "anchor"
+                  ],
                   "type": "object"
                 },
                 {
@@ -270,11 +312,19 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "node_id"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "node_id"
+                  ],
                   "type": "object"
                 }
               ]
@@ -296,7 +346,14 @@
             "type": "string"
           }
         },
-        "required": ["api_id", "path", "symbol", "contract_kind", "owner", "evidence"],
+        "required": [
+          "api_id",
+          "path",
+          "symbol",
+          "contract_kind",
+          "owner",
+          "evidence"
+        ],
         "type": "object"
       },
       "type": "array"
@@ -371,7 +428,10 @@
     "scan_scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["exclusions", "files_excluded"],
+      "required": [
+        "exclusions",
+        "files_excluded"
+      ],
       "properties": {
         "exclusions": {
           "type": "array",
@@ -387,18 +447,33 @@
     },
     "baseline": {
       "type": "object",
-      "required": ["ref", "resolved_sha", "status", "reason"],
+      "required": [
+        "ref",
+        "resolved_sha",
+        "status",
+        "reason"
+      ],
       "additionalProperties": false,
       "properties": {
         "ref": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "resolved_sha": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "status": {
           "type": "string",
-          "enum": ["APPLIED", "UNAVAILABLE", "NOT_DECLARED"]
+          "enum": [
+            "APPLIED",
+            "UNAVAILABLE",
+            "NOT_DECLARED"
+          ]
         },
         "reason": {
           "type": "string"

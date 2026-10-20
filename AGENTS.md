@@ -61,7 +61,7 @@ Be mindful of the user's `gh` CLI API rate limit — batch requests where possib
 
 ## Ecosystem Standard (agent_project_standard)
 
-This project adopts `agent_project_standard` in `tool_pinned` mode (v3.1.3):
+This project adopts `agent_project_standard` in `tool_pinned` mode (v3.1.10):
 - Standard tools & conventions: `docs/dev/standard/`
 - Structure validation: `python docs/dev/standard/tools/validate_structure.py --root . --profile target-project --language-profile mixed --schemas-root docs/dev/standard/schemas --check-paths --check-registry --check-schemas --check-project-snapshot`
 - Project snapshot: `docs/PROJECT_SNAPSHOT.md` and `docs/registry/project_snapshot.json`

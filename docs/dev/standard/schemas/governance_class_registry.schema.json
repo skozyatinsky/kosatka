@@ -70,7 +70,10 @@
             "uniqueItems": true
           },
           "required_schema": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -110,7 +113,12 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "protocol_version", "mandatory_class_ids", "classes"],
+  "required": [
+    "schema_version",
+    "protocol_version",
+    "mandatory_class_ids",
+    "classes"
+  ],
   "title": "Semantic governance class registry",
   "type": "object"
 }

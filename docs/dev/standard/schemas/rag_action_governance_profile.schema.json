@@ -34,7 +34,12 @@
     },
     "allowed_modes": {
       "items": {
-        "enum": ["ANSWER", "PROPOSE", "EXECUTE", "VERIFY"]
+        "enum": [
+          "ANSWER",
+          "PROPOSE",
+          "EXECUTE",
+          "VERIFY"
+        ]
       },
       "minItems": 4,
       "type": "array",
@@ -92,7 +97,11 @@
         },
         "statuses": {
           "items": {
-            "enum": ["COMMAND_ACCEPTED", "COMMAND_EXECUTED", "BUSINESS_RESULT_VERIFIED"]
+            "enum": [
+              "COMMAND_ACCEPTED",
+              "COMMAND_EXECUTED",
+              "BUSINESS_RESULT_VERIFIED"
+            ]
           },
           "type": "array",
           "uniqueItems": true
@@ -275,7 +284,13 @@
         },
         "classes": {
           "items": {
-            "enum": ["READ_ONLY", "LOW", "MEDIUM", "HIGH", "PROHIBITED"]
+            "enum": [
+              "READ_ONLY",
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "PROHIBITED"
+            ]
           },
           "type": "array",
           "uniqueItems": true
@@ -321,7 +336,10 @@
           "uniqueItems": true
         }
       },
-      "required": ["required", "required_fields"],
+      "required": [
+        "required",
+        "required_fields"
+      ],
       "type": "object"
     }
   },

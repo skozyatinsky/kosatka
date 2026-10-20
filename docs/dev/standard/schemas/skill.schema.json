@@ -4,7 +4,11 @@
   "title": "AI-agent skill front matter",
   "description": "Обязательное ядро универсально. Остальные поля — родные поля Claude Code (adapter-specific, см. adapters/claude-code/); они разрешены, но не выдуманы: перечень закрыт и повторяет документацию среды. Незадокументированное поле по-прежнему отклоняется — allowlist не превращается в «пропускай всё».",
   "type": "object",
-  "required": ["name", "invocation", "description"],
+  "required": [
+    "name",
+    "invocation",
+    "description"
+  ],
   "additionalProperties": false,
   "properties": {
     "name": {
@@ -13,7 +17,10 @@
     },
     "invocation": {
       "type": "string",
-      "enum": ["user", "model"],
+      "enum": [
+        "user",
+        "model"
+      ],
       "description": "Намерение стандарта: кем скил задуман к вызову. Механикой управляют поля среды ниже; они не должны противоречить намерению."
     },
     "description": {
@@ -41,7 +48,9 @@
     },
     "context": {
       "type": "string",
-      "enum": ["fork"],
+      "enum": [
+        "fork"
+      ],
       "description": "Claude Code: запуск в изолированном субагенте."
     },
     "agent": {

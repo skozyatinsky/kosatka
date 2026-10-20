@@ -6,7 +6,11 @@
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["name", "kind", "path"],
+    "required": [
+      "name",
+      "kind",
+      "path"
+    ],
     "additionalProperties": false,
     "properties": {
       "name": {

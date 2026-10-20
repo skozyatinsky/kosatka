@@ -2202,6 +2202,158 @@ def check_markdown_links(root: Path) -> list[str]:
     return out
 
 
+# --- правило языка в корневом AGENTS.md и английские слова русскими буквами (3.1.10) ---
+# Правило перевода в скобках давно было в стандарте, но раскатка обновляет
+# только docs/dev/standard/, а корневой AGENTS.md проекта не трогает. Агенты
+# BestPrice правила не видели, и в документации копились «пайплайн», «оффер».
+LANGUAGE_RULE_HEADING_RE = re.compile(r"^##\s+Язык(?:\s|$)")
+LANGUAGE_RULE_DICTIONARY_RE = re.compile(r"ТЕРМИНЫ\.md|TERMINOLOGY_DICTIONARY\.md")
+HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+INLINE_CODE_RE = re.compile(r"`[^`]*`")
+TRANSLITERATION_HEADING_MARK = "русскими буквами"
+CYRILLIC_LETTER = "а-яёА-ЯЁ"
+#: Файлы, которые перечисляют запрещённые слова по замыслу.
+TRANSLITERATION_SOURCE_NAMES = frozenset({"TERMINOLOGY_DICTIONARY.md", "ТЕРМИНЫ.md"})
+
+
+@enforces_rule("APS-CORE-TERMINOLOGYDICTION-FD01-002")
+@emits_diagnostic("APS-CORE-TERMINOLOGYDICTION-FD01-002", "LANGUAGE_RULE_PRESENT")
+@emits_diagnostic("APS-CORE-TERMINOLOGYDICTION-FD01-002", "LANGUAGE_RULE_MISSING")
+@emits_diagnostic("APS-CORE-TERMINOLOGYDICTION-FD01-002", "LANGUAGE_RULE_INCOMPLETE")
+def check_language_rule(root: Path, language_profile: str) -> list[str]:
+    """Корневой AGENTS.md сам содержит правило языка (TERMINOLOGY_DICTIONARY §0.3).
+
+    Ссылка на документ из `docs/dev/standard/` не засчитывается: его агент
+    открывает только по ссылке, а корневой файл читает каждый.
+    """
+    if language_profile != "ru_internal":
+        return []
+    agents = root / "AGENTS.md"
+    if not agents.exists():
+        return ["правило языка: в корне проекта нет AGENTS.md"]
+    try:
+        text = agents.read_text(encoding="utf-8")
+    except (OSError, UnicodeError):
+        return ["правило языка: AGENTS.md должен читаться как UTF-8"]
+    lines = HTML_COMMENT_RE.sub("", text).splitlines()
+    start = next((i for i, line in enumerate(lines) if LANGUAGE_RULE_HEADING_RE.match(line)), None)
+    if start is None:
+        return [
+            "правило языка: в корневом AGENTS.md нет раздела `## Язык` — вставьте "
+            "канонический блок из §0.3 docs/dev/standard/conventions/TERMINOLOGY_DICTIONARY.md"
+        ]
+    section: list[str] = []
+    for line in lines[start + 1:]:
+        if re.match(r"^#{1,2}(?:\s|$)", line):
+            break
+        section.append(line)
+    body = "\n".join(section)
+    missing: list[str] = []
+    if "скобк" not in body.lower():
+        missing.append("правила перевода английского термина в скобках")
+    if not LANGUAGE_RULE_DICTIONARY_RE.search(body):
+        missing.append("ссылки на словарь терминов (ТЕРМИНЫ.md или TERMINOLOGY_DICTIONARY.md)")
+    if missing:
+        return [
+            f"правило языка: в разделе «{lines[start].lstrip('#').strip()}» корневого "
+            f"AGENTS.md нет {' и '.join(missing)} (TERMINOLOGY_DICTIONARY §0.3)"
+        ]
+    return []
+
+
+def _default_terminology_dictionary() -> Path | None:
+    """Общий словарь рядом с инструментом: в проекте — conventions/, в пакете — core/."""
+    base = Path(__file__).resolve().parents[1]
+    for candidate in (base / "conventions" / "TERMINOLOGY_DICTIONARY.md",
+                      base / "core" / "TERMINOLOGY_DICTIONARY.md"):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def load_transliterations(path: Path) -> list[tuple[re.Pattern[str], str, str]]:
+    """Строки таблицы под заголовком со словами «русскими буквами».
+
+    Первая колонка — формы через запятую; звёздочка в конце означает «и все
+    формы слова». Возвращает (шаблон, чем заменить, английский термин).
+    """
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError):
+        return []
+    entries: list[tuple[re.Pattern[str], str, str]] = []
+    in_section = False
+    for line in lines:
+        if re.match(r"^#{1,6}\s", line):
+            in_section = TRANSLITERATION_HEADING_MARK in line
+            continue
+        if not in_section or not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
+        if len(cells) < 3 or cells[0] in ("Не писать", "") or set(cells[0]) <= set("-: "):
+            continue
+        for form in (part.strip().lower() for part in cells[0].split(",")):
+            if not form:
+                continue
+            stem = re.escape(form.rstrip("*"))
+            tail = f"[{CYRILLIC_LETTER}-]*" if form.endswith("*") else f"(?![{CYRILLIC_LETTER}])"
+            entries.append((
+                re.compile(f"(?<![{CYRILLIC_LETTER}-]){stem}{tail}", re.IGNORECASE),
+                cells[1],
+                cells[2],
+            ))
+    return entries
+
+
+@enforces_rule("APS-CORE-TERMINOLOGYDICTION-FD01-003")
+@emits_diagnostic("APS-CORE-TERMINOLOGYDICTION-FD01-003", "TRANSLITERATION_ABSENT")
+@emits_diagnostic("APS-CORE-TERMINOLOGYDICTION-FD01-003", "TRANSLITERATION_FOUND")
+@emits_diagnostic("APS-CORE-TERMINOLOGYDICTION-FD01-003", "TRANSLITERATION_DICTIONARY_MISSING")
+def check_transliteration(root: Path, dictionary: Path | None = None) -> list[str]:
+    """Английские слова русскими буквами в Markdown (TERMINOLOGY_DICTIONARY §3.1).
+
+    Предупреждение, а не ошибка: на момент введения в 13 проектах парка 756
+    таких слов, и раскатка их не исправляет. Блоки и фрагменты кода,
+    HTML-комментарии, словари и вендорённый `docs/dev/standard/` не смотрим.
+    """
+    source = dictionary or _default_terminology_dictionary()
+    if source is None or not source.is_file():
+        return ["transliteration: не найден общий словарь TERMINOLOGY_DICTIONARY.md "
+                "рядом с инструментом проверки"]
+    entries = load_transliterations(source)
+    if not entries:
+        return [f"transliteration: в {source.name} нет таблицы §3.1 «… русскими буквами»"]
+    project_terms = root / "docs" / "ТЕРМИНЫ.md"
+    if project_terms.is_file():
+        entries += load_transliterations(project_terms)
+    out: list[str] = []
+    for f, rel in _iter_files(root, ".md"):
+        posix = rel.as_posix()
+        if f.name in TRANSLITERATION_SOURCE_NAMES or posix.startswith("docs/dev/standard/"):
+            continue
+        try:
+            text = f.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        in_fence = False
+        # комментарий заменяем пробелами по строкам, чтобы номера строк не съехали
+        text = HTML_COMMENT_RE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+        for n, line in enumerate(text.splitlines(), 1):
+            if line.lstrip().startswith("```"):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                continue
+            prose = INLINE_CODE_RE.sub(" ", line)
+            for pattern, replacement, english in entries:
+                for match in pattern.finditer(prose):
+                    out.append(
+                        f"{WARN_PREFIX}transliteration: {posix}:{n}: «{match.group(0)}» — "
+                        f"пишите «{replacement}» ({english}), TERMINOLOGY_DICTIONARY §3.1"
+                    )
+    return out
+
+
 # --- НСИ в коде: крупные литеральные справочники/прайсы вне reference/ (v2.9.23) ---
 DATA_NAME_RE = re.compile(
     r"(?i)(price|прайс|цен[аы]|catalog|catalogue|каталог|synonym|синоним|"
@@ -8616,7 +8768,7 @@ def check_version_sync(root: Path) -> list[str]:
     # Список объявляется явно, а не выводится обходом всех JSON с полем
     # standard_version. У большинства реестров это поле означает «версия, в
     # которой контракт менялся последний раз»: audit_sequence несёт 2.9.157,
-    # профили памяти — 2.9.145, trusted_tools_manifest — 2.9.151 и вдобавок
+    # профили памяти — 2.9.145, trusted_tools_manifest — 3.1.10 и вдобавок
     # закрыт внешним SHA-256 pin. Требовать от них текущую версию значило бы
     # заставить их записать неправду о собственной истории.
     for rel in mf.get("version_bearing_registries", []) or []:
@@ -8673,6 +8825,8 @@ def main() -> int:
     parser.add_argument("--check-code-language", action="store_true", help="ASCII-идентификаторы, UPPER_SNAKE env, snake_case config keys (CODE_LANGUAGE_POLICY)")
     parser.add_argument("--check-best-style", action="store_true", help="агрегатор инженерного стиля: layout+entrypoints+file-size+code-language+hardcode+user-functions+project-snapshot+test-runner")
     parser.add_argument("--check-pattern-memory", action="store_true", help="память паттернов: SUCCESS_PATTERNS/ANTI_PATTERNS + engineering_patterns.json (LEARNING_LOOP_STANDARD)")
+    parser.add_argument("--check-language-rule", action="store_true", help="корневой AGENTS.md содержит раздел `## Язык` с правилом перевода в скобках и ссылкой на словарь (ru_internal)")
+    parser.add_argument("--check-transliteration", action="store_true", help="английские слова русскими буквами в .md по таблице §3.1 TERMINOLOGY_DICTIONARY (предупреждения)")
     parser.add_argument("--check-markdown-links", action="store_true", help="локальные относительные markdown-ссылки резолвятся (внешние/якоря/код-блоки пропускаются)")
     parser.add_argument("--check-loop-safe-mutation", action="store_true", help="коллекция не изменяется во время обхода её же самой: for x in items с items.append/remove/del items[...] в теле — молчаливый пропуск элементов у list, RuntimeError у dict/set (CC-LOOP-SAFE-MUTATION, v2.9.158)")
     parser.add_argument("--check-data-in-code", action="store_true", help="крупные литеральные справочники/прайсы/каталоги в .py вне reference/ (НСИ не в коде)")
@@ -8836,6 +8990,10 @@ def main() -> int:
         problems += check_pattern_memory(root, args.schemas_root)
     if args.check_markdown_links:
         problems += check_markdown_links(root)
+    if args.check_language_rule:
+        problems += check_language_rule(root, args.language_profile)
+    if args.check_transliteration:
+        problems += check_transliteration(root)
     if args.check_loop_safe_mutation:
         problems += check_loop_safe_mutation(root)
     if args.check_data_in_code:

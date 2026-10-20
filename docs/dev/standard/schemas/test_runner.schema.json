@@ -5,19 +5,14 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "registry": { "type": "string" },
-    "base": { "type": "object", "additionalProperties": { "type": "string" } },
-    "cli": { "type": "object" },
-    "env": { "type": "array", "items": { "type": "string" } },
+    "registry": {"type": "string"},
+    "base": {"type": "object", "additionalProperties": {"type": "string"}},
+    "cli": {"type": "object"},
+    "env": {"type": "array", "items": {"type": "string"}},
     "defaults": {
       "type": "object",
-      "properties": {
-        "mode": {
-          "type": "string",
-          "enum": ["smoke", "changed", "affected", "full", "critical", "random"]
-        }
-      }
+      "properties": {"mode": {"type": "string", "enum": ["smoke", "changed", "affected", "full", "critical", "random"]}}
     },
-    "report": { "type": "string" }
+    "report": {"type": "string"}
   }
 }

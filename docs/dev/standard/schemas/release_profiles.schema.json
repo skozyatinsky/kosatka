@@ -17,7 +17,13 @@
           },
           "allowed_receipt_statuses": {
             "items": {
-              "enum": ["PASS", "FAIL", "INCOMPLETE", "DIAGNOSTIC_ONLY", "SELF_ATTESTED"]
+              "enum": [
+                "PASS",
+                "FAIL",
+                "INCOMPLETE",
+                "DIAGNOSTIC_ONLY",
+                "SELF_ATTESTED"
+              ]
             },
             "type": "array",
             "uniqueItems": true
@@ -55,7 +61,10 @@
             "type": "boolean"
           },
           "failure_mode": {
-            "enum": ["fail_closed", "diagnostic"]
+            "enum": [
+              "fail_closed",
+              "diagnostic"
+            ]
           },
           "mandatory_steps": {
             "items": {
@@ -74,7 +83,11 @@
             "type": "string"
           },
           "requires_clean_working_tree": {
-            "enum": ["always", "if_git", "no"]
+            "enum": [
+              "always",
+              "if_git",
+              "no"
+            ]
           },
           "requires_git_repository": {
             "type": "boolean"
@@ -123,7 +136,10 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "profiles"],
+  "required": [
+    "schema_version",
+    "profiles"
+  ],
   "title": "Execution and release profiles",
   "type": "object"
 }

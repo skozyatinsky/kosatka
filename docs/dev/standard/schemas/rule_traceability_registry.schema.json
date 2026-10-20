@@ -27,7 +27,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["path", "kind"],
+        "required": [
+          "path",
+          "kind"
+        ],
         "properties": {
           "path": {
             "type": "string",
@@ -35,7 +38,11 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["markdown", "markdown_tree", "json_schema_tree"]
+            "enum": [
+              "markdown",
+              "markdown_tree",
+              "json_schema_tree"
+            ]
           }
         }
       }
@@ -43,7 +50,11 @@
     "previous_release": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["version", "registry_path", "registry_sha256"],
+      "required": [
+        "version",
+        "registry_path",
+        "registry_sha256"
+      ],
       "properties": {
         "version": {
           "type": "string",
@@ -109,13 +120,19 @@
   },
   "$defs": {
     "nullableVersion": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
     "testEntry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["node_id", "expected_diagnostic_code"],
+      "required": [
+        "node_id",
+        "expected_diagnostic_code"
+      ],
       "properties": {
         "node_id": {
           "type": "string",
@@ -179,21 +196,36 @@
         "human_source": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "path", "anchor", "json_pointer", "rule_text_sha256"],
+          "required": [
+            "kind",
+            "path",
+            "anchor",
+            "json_pointer",
+            "rule_text_sha256"
+          ],
           "properties": {
             "kind": {
               "type": "string",
-              "enum": ["markdown", "schema_description"]
+              "enum": [
+                "markdown",
+                "schema_description"
+              ]
             },
             "path": {
               "type": "string",
               "minLength": 1
             },
             "anchor": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "json_pointer": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "rule_text_sha256": {
               "type": "string",
@@ -225,18 +257,28 @@
           "$ref": "#/$defs/nullableVersion"
         },
         "replacement_rule_id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "pattern": "^APS-[A-Z0-9]+(?:-[A-Z0-9]+)+$"
         },
         "change_reason": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "implementation": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["symbol", "annotation", "gate_symbols"],
+            "required": [
+              "symbol",
+              "annotation",
+              "gate_symbols"
+            ],
             "properties": {
               "symbol": {
                 "type": "string",
@@ -263,7 +305,9 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["code"],
+            "required": [
+              "code"
+            ],
             "properties": {
               "code": {
                 "type": "string",
@@ -275,7 +319,11 @@
         "tests": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["positive", "negative", "bypass"],
+          "required": [
+            "positive",
+            "negative",
+            "bypass"
+          ],
           "properties": {
             "positive": {
               "type": "array",
@@ -306,12 +354,18 @@
           }
         },
         "cost": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "minLength": 1,
           "description": "Чего стоит соблюдение правила: что оно делает труднее, медленнее или дороже и когда перестаёт окупаться. Условия заполнения — APS-RULE-INTENT-001."
         },
         "observable_effect": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "minLength": 1,
           "description": "Что меняется в работе, когда правило действует: утверждение о мире, а не о соблюдении. Условия заполнения — APS-RULE-INTENT-001."
         }

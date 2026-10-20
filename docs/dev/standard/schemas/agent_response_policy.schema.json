@@ -75,7 +75,11 @@
       "const": "block"
     },
     "language_profile": {
-      "enum": ["ru_internal", "en_public", "mixed"]
+      "enum": [
+        "ru_internal",
+        "en_public",
+        "mixed"
+      ]
     },
     "max_diagnostics": {
       "maximum": 100,
@@ -83,7 +87,11 @@
       "type": "integer"
     },
     "mixed_language_mode": {
-      "enum": ["auto", "ru", "en"]
+      "enum": [
+        "auto",
+        "ru",
+        "en"
+      ]
     },
     "required_translations": {
       "additionalProperties": {
@@ -104,7 +112,12 @@
           "const": "перечень реально запущенных компонентов"
         }
       },
-      "required": ["evidence", "reachability", "runtime inventory", "candidate"],
+      "required": [
+        "evidence",
+        "reachability",
+        "runtime inventory",
+        "candidate"
+      ],
       "type": "object"
     },
     "schema_version": {

@@ -22,7 +22,10 @@
               "type": "boolean"
             }
           },
-          "required": ["supported", "procedure"],
+          "required": [
+            "supported",
+            "procedure"
+          ],
           "type": "object"
         },
         "confirmation_policy": {
@@ -50,7 +53,10 @@
               "type": "string"
             }
           },
-          "required": ["service", "operation"],
+          "required": [
+            "service",
+            "operation"
+          ],
           "type": "object"
         },
         "idempotency": {
@@ -63,10 +69,18 @@
               "type": "boolean"
             },
             "unknown_result_policy": {
-              "enum": ["SAFE_TO_RETRY", "VERIFY_BEFORE_RETRY", "DO_NOT_RETRY"]
+              "enum": [
+                "SAFE_TO_RETRY",
+                "VERIFY_BEFORE_RETRY",
+                "DO_NOT_RETRY"
+              ]
             }
           },
-          "required": ["supported", "key_required", "unknown_result_policy"],
+          "required": [
+            "supported",
+            "key_required",
+            "unknown_result_policy"
+          ],
           "type": "object"
         },
         "input_schema_ref": {
@@ -98,13 +112,22 @@
           "uniqueItems": true
         },
         "risk_class": {
-          "enum": ["READ_ONLY", "LOW", "MEDIUM", "HIGH", "PROHIBITED"]
+          "enum": [
+            "READ_ONLY",
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "PROHIBITED"
+          ]
         },
         "verification": {
           "additionalProperties": false,
           "properties": {
             "operation": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "required": {
               "type": "boolean"
@@ -114,7 +137,11 @@
               "type": "string"
             }
           },
-          "required": ["required", "operation", "success_condition"],
+          "required": [
+            "required",
+            "operation",
+            "success_condition"
+          ],
           "type": "object"
         }
       },
@@ -153,7 +180,11 @@
       "type": "string"
     },
     "catalog_status": {
-      "enum": ["REFERENCE_PROFILE", "PROJECT_ACTIVE", "PROJECT_DRAFT"]
+      "enum": [
+        "REFERENCE_PROFILE",
+        "PROJECT_ACTIVE",
+        "PROJECT_DRAFT"
+      ]
     },
     "catalog_version": {
       "pattern": "^\\d+\\.\\d+\\.\\d+$",
