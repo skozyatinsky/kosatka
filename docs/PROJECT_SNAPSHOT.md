@@ -1,7 +1,7 @@
 # PROJECT_SNAPSHOT.md — iskinosfera-orca
 
 > Машинная карта проекта.
-> Обновление: 2026-09-23 (onboarding к agent_project_standard v3.1.3 baseline)
+> Обновление: 2026-10-21 (agent_project_standard 3.1.10; onboarding 2026-09-23 на v3.1.3)
 
 ---
 

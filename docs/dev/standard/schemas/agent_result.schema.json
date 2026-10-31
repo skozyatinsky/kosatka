@@ -85,7 +85,12 @@
           },
           "result": {
             "description": "строгий словарь (v2.9.118) — 'not run'/'unknown'/'maybe passed'/'FAILED' и т.п. свободные написания отклоняются схемой. skipped/not_run НЕ подтверждают готовность (не считаются evidence для COMPLETED).",
-            "enum": ["passed", "failed", "skipped", "not_run"],
+            "enum": [
+              "passed",
+              "failed",
+              "skipped",
+              "not_run"
+            ],
             "type": "string"
           },
           "started_at": {
@@ -94,7 +99,10 @@
             "type": "string"
           }
         },
-        "required": ["check_id", "result"],
+        "required": [
+          "check_id",
+          "result"
+        ],
         "type": "object"
       },
       "type": "array",
@@ -134,7 +142,10 @@
             "type": "string"
           }
         },
-        "required": ["path", "generator"],
+        "required": [
+          "path",
+          "generator"
+        ],
         "type": "object"
       },
       "type": "array",
@@ -164,7 +175,11 @@
             "type": "string"
           }
         },
-        "required": ["path", "reason", "approved_by"],
+        "required": [
+          "path",
+          "reason",
+          "approved_by"
+        ],
         "type": "object"
       },
       "type": "array"
@@ -200,7 +215,11 @@
             "type": "string"
           }
         },
-        "required": ["claim", "reason", "approved_by"],
+        "required": [
+          "claim",
+          "reason",
+          "approved_by"
+        ],
         "type": "object"
       },
       "type": "array",
@@ -236,7 +255,13 @@
     },
     "status": {
       "description": "COMPLETED — всё подтверждено, unverified_claims обязан быть пуст; COMPLETED_WITH_CAVEATS — есть неподтверждённые утверждения, см. unverified_claims; PARTIAL — выполнена только часть scope, остаток обязан быть перечислен в limitations (v2.9.110, AI_TO_AI_COMMUNICATION_STANDARD.md)",
-      "enum": ["COMPLETED", "COMPLETED_WITH_CAVEATS", "PARTIAL", "BLOCKED", "FAILED"],
+      "enum": [
+        "COMPLETED",
+        "COMPLETED_WITH_CAVEATS",
+        "PARTIAL",
+        "BLOCKED",
+        "FAILED"
+      ],
       "type": "string",
       "x-aps-rule": {
         "id": "APS-SCHEMA-AGENTRESULTSCHEMA-2012-001",
@@ -267,7 +292,10 @@
     },
     "task_origin": {
       "description": "v2.9.122 (P1 внешнего аудита v2.9.121 §10, репродуцировано: агент, удаливший СВОЙ agent_tasks/<id>.json целиком, обходит required_checks/task_type-специфичные инварианты, и graph DONE не отличает эту ситуацию от легитимной human-origin задачи, у которой формального контракта никогда и не было — AI_TO_AI_COMMUNICATION_STANDARD.md §14). Опционально — отсутствие поля не ломает уже принятое решение «DONE не требует task contract» (см. CHANGELOG v2.9.120 §8): без task_origin поведение НЕ меняется. Если явно указан 'machine' — docs/registry/agent_tasks/<task_id>.json ОБЯЗАН существовать (check_agent_results()); 'human' — поведение как раньше, task contract остаётся опциональным. Не выводится из факта отсутствия каталога — заявляется явно.",
-      "enum": ["human", "machine"],
+      "enum": [
+        "human",
+        "machine"
+      ],
       "type": "string",
       "x-aps-rule": {
         "id": "APS-SCHEMA-AGENTRESULTSCHEMA-2012-002",
@@ -288,11 +316,18 @@
             "type": "string"
           },
           "result": {
-            "enum": ["passed", "failed", "skipped"],
+            "enum": [
+              "passed",
+              "failed",
+              "skipped"
+            ],
             "type": "string"
           }
         },
-        "required": ["node_id", "result"],
+        "required": [
+          "node_id",
+          "result"
+        ],
         "type": "object"
       },
       "type": "array"
@@ -327,7 +362,13 @@
       "type": "string"
     }
   },
-  "required": ["status", "changed_files", "tests", "registry_updates", "unverified_claims"],
+  "required": [
+    "status",
+    "changed_files",
+    "tests",
+    "registry_updates",
+    "unverified_claims"
+  ],
   "title": "Структурированный результат работы AI-агента (не свободный текст)",
   "type": "object"
 }

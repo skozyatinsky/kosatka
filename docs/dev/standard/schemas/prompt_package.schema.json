@@ -16,7 +16,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "path"],
+        "required": [
+          "id",
+          "path"
+        ],
         "type": "object"
       },
       "minItems": 1,
@@ -37,7 +40,11 @@
             "uniqueItems": true
           },
           "mode": {
-            "enum": ["READ_ONLY", "REMEDIATION", "VERIFICATION"],
+            "enum": [
+              "READ_ONLY",
+              "REMEDIATION",
+              "VERIFICATION"
+            ],
             "type": "string"
           },
           "output_path": {
@@ -60,7 +67,12 @@
             "uniqueItems": true
           },
           "role": {
-            "enum": ["INDEPENDENT_AUDITOR", "ARCHITECT", "IMPLEMENTER", "RELEASE_VERIFIER"],
+            "enum": [
+              "INDEPENDENT_AUDITOR",
+              "ARCHITECT",
+              "IMPLEMENTER",
+              "RELEASE_VERIFIER"
+            ],
             "type": "string"
           },
           "rule_id": {
@@ -68,11 +80,19 @@
             "type": "string"
           },
           "runtime_profile": {
-            "enum": ["STANDALONE", "CHATGPT_PROJECT", "REPOSITORY_AGENT"],
+            "enum": [
+              "STANDALONE",
+              "CHATGPT_PROJECT",
+              "REPOSITORY_AGENT"
+            ],
             "type": "string"
           },
           "target_kind": {
-            "enum": ["STANDARD_PACKAGE", "EXTERNAL_PROJECT_ADOPTION", "CANDIDATE_RELEASE"],
+            "enum": [
+              "STANDARD_PACKAGE",
+              "EXTERNAL_PROJECT_ADOPTION",
+              "CANDIDATE_RELEASE"
+            ],
             "type": "string"
           },
           "title": {
@@ -107,7 +127,12 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "standard_version", "components", "entrypoints"],
+  "required": [
+    "schema_version",
+    "standard_version",
+    "components",
+    "entrypoints"
+  ],
   "title": "Prompt runtime profile package",
   "type": "object"
 }

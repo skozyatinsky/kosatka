@@ -40,7 +40,12 @@
             "type": "string"
           },
           "evidence_level": {
-            "enum": ["DOCUMENTED", "IMPLEMENTED", "EXECUTABLE_EVIDENCE", "NEGATIVE_TESTED"]
+            "enum": [
+              "DOCUMENTED",
+              "IMPLEMENTED",
+              "EXECUTABLE_EVIDENCE",
+              "NEGATIVE_TESTED"
+            ]
           },
           "external_control_required": {
             "type": "boolean"
@@ -197,7 +202,11 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "generated_markdown", "capabilities"],
+  "required": [
+    "schema_version",
+    "generated_markdown",
+    "capabilities"
+  ],
   "title": "Machine-readable standard capability registry",
   "type": "object"
 }

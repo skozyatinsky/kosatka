@@ -7,7 +7,7 @@
   "required": ["version", "principles"],
   "additionalProperties": false,
   "properties": {
-    "version": { "type": "string", "minLength": 1 },
+    "version": {"type": "string", "minLength": 1},
     "principles": {
       "type": "array",
       "minItems": 1,
@@ -45,7 +45,7 @@
           "implemented_in": {
             "type": "array",
             "minItems": 1,
-            "items": { "type": "string", "minLength": 1 },
+            "items": {"type": "string", "minLength": 1},
             "description": "Пути (относительно корня пакета) к документу(ам), где принцип реализован или где зафиксирован отказ от него. Существование на диске проверяется кодом."
           },
           "ai_adaptation": {
@@ -104,15 +104,7 @@
             "description": "v2.9.117 (P1 внешнего ревью v2.9.116: 'почти нет конкретных современных GitHub evidence — только цитаты книг'). Реальные примеры из современных open-source проектов, подтверждающие, что принцип продолжает применяться сегодня, не только у авторов книги — каждый пункт получен через WebFetch/curl/gh CLI В РАМКАХ исследовательской сессии, не восстановлен по памяти. Обязателен для status=ADOPTED (проверяется кодом, не схемой — см. check_classical_engineering_foundations()); для status=NOT_ADOPTED не имеет смысла — принцип сознательно не принят, современный пример его применения не нужен. v2.9.118 (§11.2 внешнего аудита v2.9.117): repository/commit/path — структурированное разложение url для commit-pinned источников (не для всех — статья/стандарт/блог не раскладываются); evidence_level — структурная (не содержательная) классификация: E1 закреплён на конкретный commit SHA (repository+commit; path — опциональное уточнение файла внутри, не обязателен — коммит без указания конкретного файла тоже E1), E2 идентифицирует репозиторий без commit-пиннинга (branch/issue/PR/bare-repo ссылка — commit отсутствует), E3 — источник вне GitHub (repository не задан вовсе). Локальный release-gate проверяет ТОЛЬКО структуру (полнота, commit-format, path, hash-format, допустимый уровень) — НЕ ходит в интернет; периодический benchmark-аудит (не этот код) проверяет содержимое online.",
             "items": {
               "type": "object",
-              "required": [
-                "project",
-                "url",
-                "mechanism",
-                "confidence",
-                "evidence_level",
-                "verified_at",
-                "example_status"
-              ],
+              "required": ["project", "url", "mechanism", "confidence", "evidence_level", "verified_at", "example_status"],
               "additionalProperties": false,
               "properties": {
                 "project": {
@@ -172,12 +164,7 @@
                 },
                 "example_status": {
                   "type": "string",
-                  "enum": [
-                    "MODERN_EXAMPLE",
-                    "STRONG_IMPLEMENTATION",
-                    "BENCHMARK_CANDIDATE",
-                    "BEST_IN_CLASS_CONFIRMED"
-                  ],
+                  "enum": ["MODERN_EXAMPLE", "STRONG_IMPLEMENTATION", "BENCHMARK_CANDIDATE", "BEST_IN_CLASS_CONFIRMED"],
                   "description": "v2.9.118 (§11.3 внешнего аудита v2.9.117: 'не путать examples и best-in-class'). Возрастающая по строгости заявка: MODERN_EXAMPLE — просто реальный современный пример применения (базовый, значение по умолчанию для большинства записей); STRONG_IMPLEMENTATION — особенно чистая/показательная реализация, но без формального сравнения с альтернативами; BENCHMARK_CANDIDATE — рассматривается как потенциально лучший в классе, отбор не завершён; BEST_IN_CLASS_CONFIRMED — формально подтверждённый лучший пример, требует evidence_level=E1 (commit-pinned) И существования reference/BENCHMARK_SELECTION.md с критериями/кандидатами/причинами выбора/контрпримерами (проверяется кодом, не схемой — см. check_classical_engineering_foundations()). Не путать со status принципа (ADOPTED/NOT_ADOPTED) — это отдельная ось про качество ОДНОГО evidence-примера, не про судьбу принципа."
                 }
               }

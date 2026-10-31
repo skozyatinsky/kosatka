@@ -5,7 +5,7 @@
 # It never upgrades a requirement to DONE without executable evidence.
 # ======================================================================
 from __future__ import annotations
-import argparse, hashlib, json, re, subprocess, uuid, zipfile
+import argparse, hashlib, json, os, re, subprocess, uuid, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from xml.etree import ElementTree
@@ -35,20 +35,40 @@ def classify(path:Path,text:str)->str:
     if parent_parts & {"тз", "spec", "specs", "requirements"} or any(k in name for k in ("тз","tz_","spec","technical")) or any(k in head for k in ("техническ","requirements","требован")): return "TECHNICAL_SPEC"
     return "REFERENCE"
 
-def code_evidence(root:Path,phrase:str)->list[str]:
-    tokens=[t for t in re.findall(r"[a-zA-Zа-яА-ЯёЁ0-9_]{5,}",phrase) if t.casefold() not in {"система","должна","должен","необходимо","требуется"}][:3]
-    if not tokens:return []
-    evidence=[]
-    for path in root.rglob("*"):
-        if not path.is_file() or any(part in SKIP or part=="docs" for part in path.relative_to(root).parts):continue
-        if path.suffix.lower() not in {".py",".js",".ts",".tsx",".java",".go",".rs",".yml",".yaml",".json",".toml"}:continue
-        text=path.read_text(encoding="utf-8",errors="ignore").casefold()
-        if sum(token.casefold() in text for token in tokens)>=2:evidence.append(path.relative_to(root).as_posix())
-        if len(evidence)>=5:break
-    return evidence
+CODE_SUFFIXES={".py",".js",".ts",".tsx",".java",".go",".rs",".yml",".yaml",".json",".toml"}
+STOP_TOKENS={"система","должна","должен","необходимо","требуется"}
+MAX_EVIDENCE=5
+
+class CodeIndex:
+    """Один обход дерева и один раз прочитанные файлы кода; поиск по токенам кэшируется.
+
+    Раньше code_evidence на каждое требование заново обходила всё дерево, и аудит
+    не завершался на репозиториях с десятками тысяч строк требований."""
+    def __init__(self,root:Path):
+        self.paths:list[str]=[];self.texts:list[str]=[];self._by_token:dict[str,frozenset[int]]={}
+        found=[]
+        for dirpath,dirnames,filenames in os.walk(root):
+            dirnames[:]=[d for d in dirnames if d not in SKIP and d!="docs"]
+            for name in filenames:
+                if name in SKIP or name=="docs" or Path(name).suffix.lower() not in CODE_SUFFIXES:continue
+                path=Path(dirpath)/name
+                if path.is_file():found.append(path)
+        for path in sorted(found,key=lambda item:item.relative_to(root).as_posix()):
+            self.paths.append(path.relative_to(root).as_posix());self.texts.append(path.read_text(encoding="utf-8",errors="ignore").casefold())
+    def _files_with(self,token:str)->frozenset[int]:
+        key=token.casefold()
+        if key not in self._by_token:self._by_token[key]=frozenset(i for i,text in enumerate(self.texts) if key in text)
+        return self._by_token[key]
+    def evidence(self,phrase:str)->list[str]:
+        tokens=[t for t in re.findall(r"[a-zA-Zа-яА-ЯёЁ0-9_]{5,}",phrase) if t.casefold() not in STOP_TOKENS][:3]
+        if not tokens:return []
+        hits:dict[int,int]={}
+        for token in tokens:
+            for i in self._files_with(token):hits[i]=hits.get(i,0)+1
+        return [self.paths[i] for i in sorted(i for i,count in hits.items() if count>=2)[:MAX_EVIDENCE]]
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument("--root",default=".");p.add_argument("--audit-type",choices=["MANUAL","SCHEDULED"],default="MANUAL");p.add_argument("--output",required=True);p.add_argument("--markdown-output");a=p.parse_args();root=Path(a.root).resolve();docs=root/"docs";documents=[];requirements=[]
+    p=argparse.ArgumentParser();p.add_argument("--root",default=".");p.add_argument("--audit-type",choices=["MANUAL","SCHEDULED"],default="MANUAL");p.add_argument("--output",required=True);p.add_argument("--markdown-output");a=p.parse_args();root=Path(a.root).resolve();docs=root/"docs";documents=[];requirements=[];index=None
     for path in sorted(docs.rglob("*")) if docs.exists() else []:
         if not path.is_file() or any(part in SKIP for part in path.relative_to(root).parts):continue
         text,error=read_doc(path); kind=classify(path,text); rel=path.relative_to(root).as_posix(); digest=hashlib.sha256(path.read_bytes()).hexdigest()
@@ -60,7 +80,8 @@ def main():
             if len(cleaned)>500 or not any(k in cleaned.casefold() for k in KEYWORDS):continue
             m=REQ.match(cleaned)
             if not m:continue
-            idx+=1;rid=f"REQ-{re.sub(r'[^A-Z0-9]+','-',path.stem.upper())[:32]}-{idx:03d}";evidence=code_evidence(root,cleaned)
+            if index is None:index=CodeIndex(root)
+            idx+=1;rid=f"REQ-{re.sub(r'[^A-Z0-9]+','-',path.stem.upper())[:32]}-{idx:03d}";evidence=index.evidence(cleaned)
             status="ФОРМАЛЬНО ЗАЯВЛЕНО" if evidence else "НЕ ПРОВЕРЕНО"
             requirements.append({"id":rid,"requirement":cleaned,"source":rel,"line":line_no,"status":status,"evidence":evidence,"acceptance_criterion":"Критерий приёмки в ТЗ отсутствует."})
     counts={};

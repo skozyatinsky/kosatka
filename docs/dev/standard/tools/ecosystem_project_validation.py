@@ -11,6 +11,14 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from ecosystem_localization_checks import (
+    catalog_value_findings,
+    flatten_catalog,
+    load_catalog as load_localization_catalog,
+    placeholder_findings,
+    switching_findings,
+    unreviewed_findings,
+)
 from ecosystem_reuse_validation import validate_reuse_decisions
 from ecosystem_validation_common import (
     ACCESSIBILITY_RULE,
@@ -22,6 +30,7 @@ from ecosystem_validation_common import (
     HTTP32_RULE,
     INTEGRATION_BOUNDARY_RULE,
     KNOWN_OPENAPI_RE,
+    LOCALIZATION_CANON_RULE,
     LOCALIZATION_RULE,
     OPENAPI_VERSION_RE,
     PORTABILITY_RULE,
@@ -195,7 +204,9 @@ def validate_localization(root: Path, data: dict[str, Any]) -> list[RuleFinding]
         if error or not isinstance(catalog, dict):
             findings.append(_finding("LOCALIZATION_PROFILE_REQUIRED", LOCALIZATION_RULE, "Каталог локали отсутствует или не является JSON-объектом", locale=locale, path=item.get("path")))
         else:
-            key_sets[str(locale)] = set(catalog)
+            # Вложенный каталог (i18next) сравнивается по полному пути ключа,
+            # а не по разделам верхнего уровня.
+            key_sets[str(locale)] = set(flatten_catalog(catalog)[0])
     if key_sets:
         base_keys = key_sets.get(str(profile.get("base_locale")), set())
         for locale, keys in key_sets.items():
@@ -209,6 +220,43 @@ def validate_localization(root: Path, data: dict[str, Any]) -> list[RuleFinding]
         if error:
             findings.append(error)
     return _with_pass(findings, LOCALIZATION_RULE, "LOCALIZATION_PROFILE_VALID", "Локали, форматирование, ключи и доказательства описаны машинно", locales=supported)
+
+
+@enforces_rule("APS-CORE-LOCALIZATION-002")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_CANON_VALID")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_CATALOG_INVALID")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_PLACEHOLDERS_MISMATCH")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_SWITCHING_INVALID")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_UNREVIEWED_LEDGER_INVALID")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_TRANSLATION_UNREVIEWED")
+@emits_diagnostic("APS-CORE-LOCALIZATION-002", "LOCALIZATION_UNREVIEWED_RELEASE_LOCALE")
+def validate_localization_canon(root: Path, data: dict[str, Any]) -> list[RuleFinding]:
+    """Канон парка поверх APS-CORE-LOCALIZATION-001: качество каталогов, переключение, вычитка."""
+    findings: list[RuleFinding] = []
+    ui = data.get("ui") if isinstance(data.get("ui"), dict) else {}
+    profile = data.get("localization") if isinstance(data.get("localization"), dict) else None
+    if not ui.get("present") or profile is None:
+        # Отсутствие профиля у проекта с UI уже блокирует APS-CORE-LOCALIZATION-001.
+        return _with_pass(findings, LOCALIZATION_CANON_RULE, "LOCALIZATION_CANON_VALID", "Канон локализации неприменим без профиля локализации", applicable=False)
+    catalogs: dict[str, dict[str, Any]] = {}
+    for item in profile.get("catalogs") if isinstance(profile.get("catalogs"), list) else []:
+        path = _existing_relative(root, item.get("path")) if isinstance(item, dict) else None
+        if path is None:
+            continue
+        catalog, error = load_localization_catalog(path)
+        if catalog is None:
+            findings.append(_finding("LOCALIZATION_CATALOG_INVALID", LOCALIZATION_CANON_RULE, "Каталог локали не читается как JSON-объект без повторов", locale=item.get("locale"), path=item.get("path"), detail=error))
+            continue
+        catalogs[str(item.get("locale"))] = catalog
+        findings.extend(catalog_value_findings(str(item.get("locale")), catalog))
+    base = catalogs.get(str(profile.get("base_locale")))
+    if base is not None:
+        for locale, catalog in catalogs.items():
+            findings.extend(placeholder_findings(base, locale, catalog))
+    runtime_forms = data.get("runtime_forms") if isinstance(data.get("runtime_forms"), list) else []
+    findings.extend(switching_findings(profile, runtime_forms))
+    findings.extend(unreviewed_findings(root, profile, {locale: set(catalog) for locale, catalog in catalogs.items()}))
+    return _with_pass(findings, LOCALIZATION_CANON_RULE, "LOCALIZATION_CANON_VALID", "Каталоги, переключение языка и учёт вычитки соответствуют канону парка")
 
 
 @enforces_rule("APS-CORE-ACCESSIBILITY-001")
@@ -596,6 +644,7 @@ def validate_ecosystem_profile(
         findings.extend(validate_http_contracts(root, component, changed_contracts=changed_contracts, today=today))
         findings.extend(validate_dual_interface(root, component))
         findings.extend(validate_localization(root, component))
+        findings.extend(validate_localization_canon(root, component))
         findings.extend(validate_accessibility(root, component))
         findings.extend(validate_portability(root, component))
         findings.extend(validate_controller_profile(root, component))

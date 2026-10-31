@@ -26,7 +26,10 @@
           },
           "literal": {
             "description": "Конкретный литерал, если исключается он один, а не весь файл.",
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "owner": {
             "minLength": 1,
@@ -64,6 +67,9 @@
       "type": "array"
     }
   },
-  "required": ["schema_version", "waivers"],
+  "required": [
+    "schema_version",
+    "waivers"
+  ],
   "type": "object"
 }

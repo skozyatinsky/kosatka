@@ -113,7 +113,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "root"],
+        "required": [
+          "id",
+          "root"
+        ],
         "type": "object"
       },
       "type": "array"
@@ -124,7 +127,9 @@
       "type": "string"
     }
   },
-  "required": ["modules"],
+  "required": [
+    "modules"
+  ],
   "title": "Реестр независимых модулей",
   "type": "object"
 }

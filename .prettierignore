@@ -1,0 +1,3 @@
+# Вендорённая копия agent_project_standard: правок в ней не бывает,
+# sync_standard.py --check считает переформатирование местной правкой.
+docs/dev/standard/

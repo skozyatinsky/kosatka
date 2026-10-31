@@ -12,7 +12,12 @@
             "type": "string"
           },
           "contract_kind": {
-            "enum": ["compatibility_api", "plugin_hook", "library_api", "external_contract"]
+            "enum": [
+              "compatibility_api",
+              "plugin_hook",
+              "library_api",
+              "external_contract"
+            ]
           },
           "evidence": {
             "items": {
@@ -59,11 +64,20 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "path", "pointer"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "path",
+                    "pointer"
+                  ],
                   "type": "object"
                 },
                 {
@@ -108,11 +122,20 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "path", "anchor"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "path",
+                    "anchor"
+                  ],
                   "type": "object"
                 },
                 {
@@ -146,11 +169,19 @@
                           "type": "string"
                         }
                       },
-                      "required": ["path", "symbol"],
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
                       "type": "object"
                     }
                   },
-                  "required": ["kind", "contract_type", "subject", "node_id"],
+                  "required": [
+                    "kind",
+                    "contract_type",
+                    "subject",
+                    "node_id"
+                  ],
                   "type": "object"
                 }
               ]
@@ -175,7 +206,14 @@
             "type": "string"
           }
         },
-        "required": ["api_id", "path", "symbol", "contract_kind", "owner", "evidence"],
+        "required": [
+          "api_id",
+          "path",
+          "symbol",
+          "contract_kind",
+          "owner",
+          "evidence"
+        ],
         "type": "object"
       },
       "type": "array"
@@ -188,7 +226,11 @@
       "type": "string"
     }
   },
-  "required": ["schema_version", "standard_version", "apis"],
+  "required": [
+    "schema_version",
+    "standard_version",
+    "apis"
+  ],
   "title": "Dead Code Public API Contracts",
   "type": "object"
 }

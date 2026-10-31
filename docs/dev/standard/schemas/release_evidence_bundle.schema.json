@@ -6,21 +6,9 @@
   "additionalProperties": false,
   "required": ["schema_version", "standard_version", "source_commit", "files"],
   "properties": {
-    "schema_version": { "const": "1.0.0" },
-    "standard_version": { "type": "string" },
-    "source_commit": { "type": ["string", "null"] },
-    "files": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["path", "sha256", "size"],
-        "properties": {
-          "path": { "type": "string" },
-          "sha256": { "type": "string" },
-          "size": { "type": "integer" }
-        },
-        "additionalProperties": false
-      }
-    }
+    "schema_version": {"const": "1.0.0"},
+    "standard_version": {"type": "string"},
+    "source_commit": {"type": ["string", "null"]},
+    "files": {"type": "array", "items": {"type": "object", "required": ["path", "sha256", "size"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string"}, "size": {"type": "integer"}}, "additionalProperties": false}}
   }
 }
