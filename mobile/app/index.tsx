@@ -715,9 +715,7 @@ export default function HomeScreen() {
         >
           <View style={styles.emptyHero}>
             <Text style={styles.emptyTitle}>{t('home.connectDesktop')}</Text>
-            <Text style={styles.emptyBody}>
-              {t('home.connectDescription')}
-            </Text>
+            <Text style={styles.emptyBody}>{t('home.connectDescription')}</Text>
             <Pressable style={styles.primaryButton} onPress={() => router.push('/pair-scan')}>
               <QrCode size={17} color={colors.bgBase} />
               <Text style={styles.primaryButtonText}>{t('home.pairDesktop')}</Text>
@@ -726,7 +724,7 @@ export default function HomeScreen() {
 
           <View style={styles.stepsSection}>
             <Text style={styles.sectionHeading}>{t('home.howItWorks')}</Text>
-            <View style={[styles.stepRow, false && styles.stepRowBorder]}>
+            <View style={styles.stepRow}>
               <View style={styles.stepNum}>
                 <Text style={styles.stepNumText}>1</Text>
               </View>
@@ -828,7 +826,9 @@ export default function HomeScreen() {
               {/* ─── Resume card ─── */}
               {resumeWorktree ? (
                 <>
-                  <Text style={[styles.sectionHeading, styles.sectionHeadingTightTop]}>{t('home.resume')}</Text>
+                  <Text style={[styles.sectionHeading, styles.sectionHeadingTightTop]}>
+                    {t('home.resume')}
+                  </Text>
                   <Pressable
                     style={({ pressed }) => [styles.resumeCard, pressed && styles.hostCardPressed]}
                     onPress={() =>
@@ -860,18 +860,24 @@ export default function HomeScreen() {
                     </View>
                     <ChevronRight size={16} color={colors.textMuted} />
                   </Pressable>
-                  <Text style={[styles.sectionHeading, styles.sectionHeadingTightTop]}>{t('home.tasks')}</Text>
+                  <Text style={[styles.sectionHeading, styles.sectionHeadingTightTop]}>
+                    {t('home.tasks')}
+                  </Text>
                   {renderTaskHomeCard()}
                 </>
               ) : (
                 <>
-                  <Text style={[styles.sectionHeading, styles.sectionHeadingTightTop]}>{t('home.tasks')}</Text>
+                  <Text style={[styles.sectionHeading, styles.sectionHeadingTightTop]}>
+                    {t('home.tasks')}
+                  </Text>
                   {renderTaskHomeCard()}
                 </>
               )}
 
               {/* ─── Quick actions ─── */}
-              <Text style={[styles.sectionHeading, { marginTop: spacing.xl }]}>{t('home.quickActions')}</Text>
+              <Text style={[styles.sectionHeading, { marginTop: spacing.xl }]}>
+                {t('home.quickActions')}
+              </Text>
               <View style={styles.quickActions}>
                 <Pressable
                   style={({ pressed }) => [styles.quickAction, pressed && styles.hostCardPressed]}
@@ -906,7 +912,7 @@ export default function HomeScreen() {
               {accountsHosts.length > 0 ? (
                 <>
                   <Text style={[styles.sectionHeading, { marginTop: spacing.xl }]}>
-{t('home.accountUsage')}
+                    {t('home.accountUsage')}
                   </Text>
                   {accountsHosts.map(({ host, snapshot }) => {
                     const claudeActiveId = snapshot.claude.activeAccountId
