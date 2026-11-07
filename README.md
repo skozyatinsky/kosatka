@@ -248,6 +248,32 @@ Pair with your desktop app to monitor and steer your agents from your phone.
 
 ---
 
+## Запуск
+
+Основной запуск (FILE_AND_FOLDER_STANDARD §2.1, «Правило одного клика»):
+
+```bash
+./run.sh
+```
+
+- Делегирует выполнение в `make run` (`pnpm run dev`).
+- Запуск в режиме разработки приложения на переднем плане.
+
+## Сборка
+
+Канонический скрипт сборки (FILE_AND_FOLDER_STANDARD §2.2):
+
+```bash
+./build.sh --target-all
+```
+
+- Интерактивный режим: `./build.sh` (меню действий в терминале).
+- Проверка зависимостей: `./build.sh --check-deps`.
+- Очистка артефактов: `./build.sh --clean`.
+- Альтернативная сборка через Makefile: `make build`.
+
+---
+
 ## Developing
 
 Want to contribute or run locally? See our [CONTRIBUTING.md](.github/CONTRIBUTING.md) guide.
