@@ -276,7 +276,7 @@ PACKAGE_REQUIRED = [
     "tools/merge_readiness_gate.py", "tools/function_registry.py",
     "tools/project_health_audit.py", "tools/audit_tz_implementation.py",
     "templates/README_TEMPLATE.md", "templates/RFC_TEMPLATE.md",
-    "checklists/docs_review.md", "prompts/apply_docs_standard.md",
+    "checklists/docs_review.md", "prompts/remediation/apply_docs_standard.md",
     "core/AGENT_INSTRUCTIONS_STANDARD.md", "core/REFERENCE_DATA_STANDARD.md",
     "core/SPEC_SYNC_STANDARD.md",
     "core/NO_HARDCODE_POLICY.md",
@@ -289,13 +289,13 @@ PACKAGE_REQUIRED = [
     "reference/SUCCESS_PATTERNS.md", "reference/ANTI_PATTERNS.md",
     "reference/VALIDATION_FAILURES.md", "reference/AGENT_BEHAVIOR_NOTES.md",
     "templates/PATTERN_CARD_TEMPLATE.md", "templates/POST_TASK_LESSONS_TEMPLATE.md",
-    "prompts/extract_lessons_from_completed_task.md",
+    "prompts/verification/extract_lessons_from_completed_task.md",
     "skills/maintenance/harvest-lessons/SKILL.md",
     "schemas/engineering_patterns.schema.json",
     "tests/test_validate_structure.py",
     "checklists/best_engineering_review.md", "checklists/ai_agent_code_review.md",
-    "prompts/enforce_best_engineering_style.md",
-    "prompts/review_ai_agent_output_like_senior_maintainer.md",
+    "prompts/remediation/enforce_best_engineering_style.md",
+    "prompts/verification/review_ai_agent_output_like_senior_maintainer.md",
     "templates/PYTHON_MODULE_TEMPLATE.py", "templates/CLI_ENTRYPOINT_TEMPLATE.py",
     "templates/BIN_LAUNCHER_TEMPLATE.sh", "templates/BIN_LAUNCHER_TEMPLATE.cmd",
     "templates/BIN_LAUNCHER_TEMPLATE.ps1",
@@ -326,7 +326,7 @@ PACKAGE_REQUIRED = [
     "templates/sync_jobs.json", "templates/encrypted_env_policy.json",
     "templates/automation_jobs.json", "templates/automation_sync_jobs.yaml",
     "templates/encrypt_env.py", "templates/rsync_job.sh", "templates/restic_backup_job.sh",
-    "prompts/setup_laptop_server_sync.md", "prompts/review_sync_backup_secrets_setup.md",
+    "prompts/migration/setup_laptop_server_sync.md", "prompts/audit/sync/review_sync_backup_secrets_setup.md",
     "adapters/park/ECOSYSTEM_SERVICES.md",
     "core/GIT_AGENT_WORKFLOW_STANDARD.md", "core/AUTOMATED_CODE_AUDIT_STANDARD.md",
     "schemas/git_agent_policy.schema.json", "schemas/code_audit_jobs.schema.json",
@@ -571,7 +571,32 @@ def parse_python(path: Path) -> ast.Module | None:
         return None
 
 
+# Виды записи functions.json, которые описывают роль символа, а не его
+# синтаксис. Схема `functions.schema.json` разрешает их с самого начала, но до
+# 3.1.12 проверка символов знала только синтаксические виды и на любой из этих
+# отвечала «не найден»: в automation_server так набралось 172 ложных нарушения
+# на месте реально существующих функций.
+#
+# Обработчик маршрута и команда CLI — функция, и часто вложенная: FastAPI-
+# обработчики объявляют внутри `register_*_routes(app)`, команды — внутри
+# фабрики приложения. Поэтому для них ищется функция на любой глубине модуля.
+# Сервис, адаптер и точка расширения — объект верхнего уровня: класс или
+# функция-фабрика. Запись вида `Класс.метод` для любой роли проверяется как метод.
+ROLE_KINDS_ANY_DEPTH_FUNCTION = frozenset({"api_handler", "cli_command"})
+ROLE_KINDS_TOP_LEVEL_OBJECT = frozenset({"service", "adapter", "extension_point"})
+SYNTAX_KINDS = frozenset({"function", "class", "method", "constant"})
+SUPPORTED_SYMBOL_KINDS = SYNTAX_KINDS | ROLE_KINDS_ANY_DEPTH_FUNCTION | ROLE_KINDS_TOP_LEVEL_OBJECT
+
+_FUNCTION_NODES = (ast.FunctionDef, ast.AsyncFunctionDef)
+
+
 def module_has_symbol(tree: ast.Module, symbol: str, kind: str) -> bool:
+    if kind in ROLE_KINDS_ANY_DEPTH_FUNCTION | ROLE_KINDS_TOP_LEVEL_OBJECT:
+        if "." in symbol:
+            return module_has_symbol(tree, symbol, "method")
+        if kind in ROLE_KINDS_ANY_DEPTH_FUNCTION:
+            return any(isinstance(n, _FUNCTION_NODES) and n.name == symbol for n in ast.walk(tree))
+        return module_has_symbol(tree, symbol, "class") or module_has_symbol(tree, symbol, "function")
     if kind == "method":
         if "." in symbol:
             class_name, method_name = symbol.split(".", 1)
@@ -611,6 +636,14 @@ def check_python_symbols(root: Path, functions_data: Any) -> list[str]:
             continue
         symbol, kind, rel_path = item.get("symbol"), item.get("kind"), item.get("path")
         if not all(isinstance(v, str) for v in (symbol, kind, rel_path)):
+            continue
+        if kind not in SUPPORTED_SYMBOL_KINDS:
+            # Неизвестный вид — не «символа нет»: иначе расхождение схемы и
+            # проверки снова выглядит как сотни нарушений в чужом коде.
+            out.append(
+                f"docs/registry/functions.json[{idx}]: вид {kind!r} не поддерживается проверкой символов; "
+                f"допустимые: {', '.join(sorted(SUPPORTED_SYMBOL_KINDS))}"
+            )
             continue
         tree = parse_python(root / rel_path)
         if tree is None:
@@ -9091,6 +9124,7 @@ def main() -> int:
         try:
             from ecosystem_project_validation import (
                 parse_owner_artifact_args,
+                validate_canon_pins,
                 validate_ecosystem_profile,
                 validate_reuse_decisions,
             )
@@ -9127,6 +9161,10 @@ def main() -> int:
                     decisions_path=reuse_path,
                     canonical_registry_path=canon_path,
                 ))
+                ecosystem_findings.extend(validate_canon_pins(
+                    root,
+                    canonical_registry_path=canon_path,
+                ))
             if args.check_ecosystem_profile:
                 profile_path = Path(args.ecosystem_profile_path) if args.ecosystem_profile_path else None
                 if profile_path is not None and not profile_path.is_absolute():
@@ -9143,6 +9181,9 @@ def main() -> int:
                 ))
                 if finding.severity == "ERROR":
                     problems.append(f"{finding.code}:{finding.rule_id}:{finding.message}")
+                elif finding.severity == "WARNING" and finding.rule_id == "APS-CORE-CANONPIN-001":
+                    # Отставание закрепления: блокирует только с --warnings-as-errors.
+                    problems.append(f"{WARN_PREFIX}{finding.code}:{finding.rule_id}:{finding.message}")
         except Exception as exc:
             finding = RuleFinding(
                 "ECOSYSTEM_VALIDATOR_INTERNAL_ERROR",

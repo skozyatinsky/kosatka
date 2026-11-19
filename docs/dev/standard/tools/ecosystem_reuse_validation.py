@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 from datetime import date
 from pathlib import Path
 from typing import Any
 
 from ecosystem_validation_common import (
+    CANONPIN_RULE,
     CONSUMER_RULE,
     DEFAULT_REUSE_PATH,
     REUSE_RULE,
@@ -150,6 +152,32 @@ def _consumer_matches(project_id: str, consumers: Any) -> bool:
     )
 
 
+_SEMVER_RE = re.compile(r"^v?(\d+)\.(\d+)\.(\d+)$")
+
+
+def _semver(value: Any) -> tuple[int, int, int] | None:
+    """`v1.9.0`, `1.9.0` или `"v1.9.0 (пояснение)"` → (1, 9, 0); иначе None."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+    match = _SEMVER_RE.match(value.strip().split()[0])
+    return (int(match[1]), int(match[2]), int(match[3])) if match else None
+
+
+def _version_conflicts(registry_version: Any, required_version: Any) -> bool:
+    """Расхождение required_version с реестром — ошибка, кроме отставания.
+
+    Отставание закрепления от свежего выпуска канона — не ошибка правила
+    переиспользования: его показывает APS-CORE-CANONPIN-001 предупреждением
+    (ADR-021 §2.4 п.9 Искиносферы). Префикс «v» различием не считается.
+    """
+    if registry_version is None:
+        return False
+    registry_semver, required_semver = _semver(registry_version), _semver(required_version)
+    if registry_semver and required_semver:
+        return required_semver > registry_semver
+    return registry_version != required_version
+
+
 def _relative_evidence(root: Path, values: Any, context: str) -> list[RuleFinding]:
     findings: list[RuleFinding] = []
     for value in values if isinstance(values, list) else []:
@@ -196,7 +224,7 @@ def _validate_adopted(
                     status=record.get("status"),
                 )
             )
-        if record.get("version") not in {None, decision.get("required_version")}:
+        if _version_conflicts(record.get("version"), decision.get("required_version")):
             findings.append(
                 finding(
                     "ECOSYSTEM_CANON_VERSION_MISMATCH",
@@ -627,3 +655,141 @@ def validate_reuse_decisions(
         "adopted и expected не смешаны с реальными потребителями",
     )
     return findings
+
+
+# --------------------------------------------------------------------------
+# APS-CORE-CANONPIN-001 — закрепление канона в манифестах потребителя.
+
+_CANON_GIT_RE = re.compile(
+    r"github\.com[/:](?P<owner>[A-Za-z0-9_.-]+)/(?P<repo>[A-Za-z0-9_.-]+?)\.git"
+    r"(?:@(?P<ref>[^\s\"'#;,\]]+))?"
+)
+_COMMIT_RE = re.compile(r"^[0-9a-fA-F]{7,40}$")
+_PIN_MANIFEST_SKIP_DIRS = {"node_modules", "venv", "site-packages", "__pycache__", "build", "dist"}
+
+
+def _canon_install_targets(records: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """owner/repo (в нижнем регистре) → канон, если install канона — git-ссылка."""
+    targets: dict[str, dict[str, Any]] = {}
+    for record in records:
+        if record.get("_section") != "modules":
+            continue
+        install = record.get("install")
+        match = _CANON_GIT_RE.search(install) if isinstance(install, str) else None
+        if match is None:
+            continue
+        key = f"{match['owner']}/{match['repo']}".casefold()
+        targets[key] = {
+            "canon": record.get("canon"),
+            "package": match["repo"],
+            "version": record.get("version"),
+            "semver": _semver(record.get("version")),
+        }
+    return targets
+
+
+def _pin_manifests(root: Path) -> list[Path]:
+    """requirements*.txt и pyproject.toml проекта; скрытые каталоги (.venv, .git,
+    .ci-owner с рабочей копией владельца реестра) и сторонние пакеты не читаются."""
+    found: list[Path] = []
+    for current, dirs, files in os.walk(root):
+        dirs[:] = sorted(d for d in dirs if not d.startswith(".") and d not in _PIN_MANIFEST_SKIP_DIRS)
+        for name in sorted(files):
+            if name == "pyproject.toml" or (name.startswith("requirements") and name.endswith(".txt")):
+                found.append(Path(current) / name)
+    return found
+
+
+def _package_pin_re(package: str) -> re.Pattern[str]:
+    name = "[-_.]".join(re.escape(part) for part in re.split(r"[-_.]", package))
+    return re.compile(r"(?<![\w.-])" + name + r"(?:\[[^\]]*\])?\s*==\s*(?P<version>v?\d+\.\d+\.\d+)(?![\w.])")
+
+
+@enforces_rule("APS-CORE-CANONPIN-001")
+@emits_diagnostic("APS-CORE-CANONPIN-001", "CANON_PIN_VALID")
+@emits_diagnostic("APS-CORE-CANONPIN-001", "CANON_PIN_FLOATING_REF")
+@emits_diagnostic("APS-CORE-CANONPIN-001", "CANON_PIN_BEHIND_REGISTRY")
+def validate_canon_pins(
+    root: Path,
+    *,
+    canonical_registry_path: Path | None,
+) -> list[RuleFinding]:
+    """Канон из реестра ставится по тегу или коммиту; отставание — предупреждение.
+
+    Плавающая git-ссылка (ветка вместо тега или коммита, либо ссылка без
+    закрепления) — ошибка. Тег или `пакет==X.Y.Z` старше поля `version`
+    канона в реестре — предупреждение, которое становится ошибкой только
+    при `--warnings-as-errors`.
+    """
+    if canonical_registry_path is None or not canonical_registry_path.is_file():
+        return []  # отсутствие реестра уже блокирует APS-CORE-ECOSYSTEMREUSE-001
+    _, records, error = _parse_canonical_registry(canonical_registry_path)
+    if error:
+        return []
+    targets = _canon_install_targets(records)
+    findings: list[RuleFinding] = []
+    checked = 0
+    for manifest in _pin_manifests(root):
+        try:
+            lines = manifest.read_text(encoding="utf-8", errors="ignore").splitlines()
+        except OSError:
+            continue
+        relative = manifest.relative_to(root).as_posix()
+        for number, line in enumerate(lines, start=1):
+            if line.lstrip().startswith("#"):
+                continue
+            for match in _CANON_GIT_RE.finditer(line):
+                target = targets.get(f"{match['owner']}/{match['repo']}".casefold())
+                if target is None:
+                    continue
+                ref = match["ref"]
+                installs = "git+" in line or re.search(r"\bgit\s*=", line) is not None
+                if not installs:
+                    continue
+                checked += 1
+                floating = (
+                    re.search(r"\bbranch\s*=", line) is not None
+                    or (ref is None and re.search(r"\b(?:tag|rev)\s*=", line) is None)
+                    or (ref is not None and _semver(ref) is None and not _COMMIT_RE.match(ref))
+                )
+                if floating:
+                    findings.append(finding(
+                        "CANON_PIN_FLOATING_REF",
+                        CANONPIN_RULE,
+                        "Канон подключён плавающей ссылкой: нужен тег выпуска или коммит",
+                        path=relative,
+                        line=number,
+                        canon=target["canon"],
+                        ref=ref,
+                    ))
+                    continue
+                pinned = _semver(ref)
+                if pinned and target["semver"] and pinned < target["semver"]:
+                    findings.append(_behind(relative, number, target, ref))
+            for target in targets.values():
+                for pin in _package_pin_re(target["package"]).finditer(line):
+                    checked += 1
+                    pinned = _semver(pin["version"])
+                    if pinned and target["semver"] and pinned < target["semver"]:
+                        findings.append(_behind(relative, number, target, pin["version"]))
+    return with_pass(
+        findings,
+        CANONPIN_RULE,
+        "CANON_PIN_VALID",
+        "Каноны из реестра закреплены тегом или коммитом",
+        pins=checked,
+    )
+
+
+def _behind(path: str, line: int, target: dict[str, Any], pinned: str) -> RuleFinding:
+    return finding(
+        "CANON_PIN_BEHIND_REGISTRY",
+        CANONPIN_RULE,
+        "Закрепление канона отстаёт от выпуска в реестре — ждёт PR раскатки",
+        severity="WARNING",
+        path=path,
+        line=line,
+        canon=target["canon"],
+        pinned=pinned,
+        registry_version=target["version"],
+    )

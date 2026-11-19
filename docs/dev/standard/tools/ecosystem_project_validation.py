@@ -19,7 +19,7 @@ from ecosystem_localization_checks import (
     switching_findings,
     unreviewed_findings,
 )
-from ecosystem_reuse_validation import validate_reuse_decisions
+from ecosystem_reuse_validation import validate_canon_pins, validate_reuse_decisions
 from ecosystem_validation_common import (
     ACCESSIBILITY_RULE,
     AXES_RULE,
@@ -699,6 +699,10 @@ def main(argv: list[str] | None = None) -> int:
             findings.extend(validate_reuse_decisions(
                 root,
                 decisions_path=Path(args.reuse_decisions).resolve() if args.reuse_decisions else None,
+                canonical_registry_path=Path(args.canonical_registry).resolve() if args.canonical_registry else None,
+            ))
+            findings.extend(validate_canon_pins(
+                root,
                 canonical_registry_path=Path(args.canonical_registry).resolve() if args.canonical_registry else None,
             ))
         if args.check_profile:
