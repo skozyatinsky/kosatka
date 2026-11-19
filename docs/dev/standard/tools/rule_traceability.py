@@ -291,6 +291,11 @@ def _validate_previous_continuity(
 
     current_map = _previous_rule_map(current)
     previous_map = _previous_rule_map(previous)
+    editorial_amendments = {
+        item.get("rule_id"): item
+        for item in current.get("approved_editorial_amendments", [])
+        if isinstance(item, dict) and item.get("rule_id")
+    }
     for rule_id, old in previous_map.items():
         new = current_map.get(rule_id)
         if new is None:
@@ -304,24 +309,32 @@ def _validate_previous_continuity(
         old_digest = _semantic_digest(old)
         new_digest = _semantic_digest(new)
         if old_digest and new_digest and old_digest != new_digest:
-            findings.extend([
-                _finding(
-                    "RULE_SEMANTIC_DIGEST_CHANGED",
-                    rule_id,
-                    "Published rule semantic digest changed under the same ID",
-                    previous=old_digest,
-                    current=new_digest,
-                    detail=rule_id,
-                ),
-                _finding(
-                    "RULE_MEANING_CHANGED_WITHOUT_NEW_ID",
-                    rule_id,
-                    "A semantic change requires a new rule ID",
-                    previous=old_digest,
-                    current=new_digest,
-                    detail=rule_id,
-                ),
-            ])
+            amendment = editorial_amendments.get(rule_id)
+            approved = (
+                isinstance(amendment, dict)
+                and bool(str(amendment.get("approved_by") or "").strip())
+                and amendment.get("previous_sha256") == old_digest
+                and amendment.get("current_sha256") == new_digest
+            )
+            if not approved:
+                findings.extend([
+                    _finding(
+                        "RULE_SEMANTIC_DIGEST_CHANGED",
+                        rule_id,
+                        "Published rule semantic digest changed under the same ID",
+                        previous=old_digest,
+                        current=new_digest,
+                        detail=rule_id,
+                    ),
+                    _finding(
+                        "RULE_MEANING_CHANGED_WITHOUT_NEW_ID",
+                        rule_id,
+                        "A semantic change requires a new rule ID",
+                        previous=old_digest,
+                        current=new_digest,
+                        detail=rule_id,
+                    ),
+                ])
         old_status = old.get("status")
         new_status = new.get("status")
         if old_status in {"DEPRECATED", "SUPERSEDED"} and new_status not in {"DEPRECATED", "SUPERSEDED"}:
@@ -722,6 +735,12 @@ def main() -> int:
     root = Path(args.root).resolve()
     registry = load_registry(root)
     previous_path = Path(args.previous_registry).resolve() if args.previous_registry else None
+    if previous_path is None and args.release_mode:
+        declared_prev = registry.get("previous_release", {}).get("registry_path")
+        if declared_prev:
+            candidate = (root / declared_prev).resolve()
+            if candidate.is_file():
+                previous_path = candidate
     previous = load_previous_registry(previous_path)
     expected_sha = args.previous_registry_sha256
     if expected_sha is None and previous_path is not None:
